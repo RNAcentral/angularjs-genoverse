@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/BurkovBA/angular-genoverse#readme",
   "devDependencies": {
-    "uglifyjs": "^2.4.10"
+    "angular": "^1.6.1",
+    "uglify-js": "^2.7.5"
   }
 }
