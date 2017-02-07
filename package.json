@@ -12,12 +12,12 @@
     "url": "git+https://github.com/BurkovBA/angular-genoverse.git"
   },
   "keywords": [
-    "Bioinformatics",
-    "genome",
-    "browser",
+    "bioinformatics",
+    "genome-browser",
     "genoverse",
     "angular",
-    "directive."
+    "directive",
+    "component"
   ],
   "author": "Boris A. Burkov",
   "license": "MIT",

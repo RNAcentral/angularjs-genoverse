@@ -1,8 +1,57 @@
 (function() {
 
-angular.module("Genoverse", []).directive("genoverse", genoverse);
+    angular.module("Genoverse", [])
+        .filter("urlencodeSpecies", urlencodeSpecies)
+        .filter("urldecodeSpecies", urldecodeSpecies)
+        .directive("genoverse", genoverse);
 
-    function genoverse() {
+
+    function urlencodeSpecies() {
+        /**
+         * Replaces whitespaces with underscores in input string (assumed to be a scientific name of species)
+         * and converts it to lower case.
+         *
+         * @param input (string} - capitalized scientific name of a species with whitespaces, e.g. Homo sapiens
+         * @returns {string} - scientific name of species with whitespaces replaces with underscores
+         */
+        return function(input) {
+            // Canis familiaris is a special case
+            if (input == 'Canis familiaris') {
+                input = 'Canis lupus familiaris';
+            }
+            return input.replace(/ /g, '_').toLowerCase();
+        }
+    }
+
+    function urldecodeSpecies() {
+        /**
+         * Replaces underscores with whitespaces in input string and capitalizes the first letter in it.
+         *
+         * @param input {string} - scientific name of a species in lower case with '_', e.g. homo_sapiens
+         * @returns {string} - capitalized scientific name of a species with whitespaces, e.g. Homo sapiens
+         */
+        return function(input) {
+            if (input == 'canis_lupus_familiaris') {
+                input = 'canis_familiaris';
+            }
+            var output = input.replace(/_/g, ' ');
+            output = output.charAt(0).toUpperCase() + output.slice(1);
+            return output;
+        }
+    }
+
+    function genoverse($filter) {
+        /**
+         * Returns the directive definition object for genoverse directive.
+         * It is meant to be used as follows:
+         *
+         * <genoverse genome={} chromosome="X" start="1" stop="1000000">
+         *     <genoverse-track id="" name="Sequence" info="" label="true"
+         *      url-template=":PROTOCOL//:ENDPOINT/overlap/region/:species/:chromosome::start-:end?feature=gene;content-type=application/json"
+         *      url-variables="{PROTOCOL: 'https', ENDPOINT: 'rest.ensembl.org'">
+         *     </genoverse-track>
+         * </genoverse>
+         */
         return {
             restrict: 'E',
             scope: false,
@@ -18,42 +67,28 @@ angular.module("Genoverse", []).directive("genoverse", genoverse);
                 "<div id='genoverse'></div>" +
                 "</div>",
             link: function(scope, element, attrs) {
-                showGenoverseSectionHeader();
-                showGenoverseSectionInfo();
-                // (re-)create Genoverse object
-                scope.browser = new Genoverse(getGenoverseConfigObject());
-                addKaryotypePlaceholder();
+
+                // Initialization
+                // --------------
+
+                render();
+
+                // set Genoverse -> Angular data flow
+                var genoverseToAngularWatches = setGenoverseToAngularWatches();
+
+                // set Angular -> Genoverse data flow
+                setAngularToGenoverseWatches(genoverseToAngularWatches);
+
+                // these need to be re-attached on every re-creation of browser
                 registerGenoverseEvents();
 
-                /**
-                 * Display Genoverse section header.
-                 */
-                function showGenoverseSectionHeader() {
-                    element.find('.genoverse-wrap h2').show();
-                }
+                // resize genoverse on browser width changes - attach once only
+                window.onresize(setGenoverseWidth);
 
-                /**
-                 * Display xref description in Genoverse section.
-                 */
-                function showGenoverseSectionInfo() {
-                    // display xref coordinates
-                    var text = '<em>' +
-                        scope.genome.species + ' ' +
-                        scope.chromosome + ':' +
-                        numberWithCommas(scope.start) + '-' +
-                        numberWithCommas(scope.end) + ':' +
-                        scope.strand +
-                        '</em>';
-                    element.find('#genoverse-coordinates').html('').hide().html(text).fadeIn('slow');
-                    // display xref description
-                    text = '<p>' + scope.description + '</p>';
-                    element.find('#genoverse-description').html('').hide().html(text).fadeIn('slow');
-                }
+                // Functions/methods
+                // -----------------
 
-                /**
-                 * Configure Genoverse initialization object.
-                 */
-                function getGenoverseConfigObject() {
+                function render() {
                     var genoverseConfig = {
                         container: element.find('#genoverse'),
                         chr: scope.chromosome,
@@ -66,6 +101,7 @@ angular.module("Genoverse", []).directive("genoverse", genoverse);
                                 name: 'Sequence',
                                 model: configureGenoverseModel('ensemblSequence'),
                                 view: Genoverse.Track.View.Sequence,
+                                controller: Genoverse.Track.Controller.Sequence,
                                 resizable: 'auto',
                                 100000: false,
                             }),
@@ -75,6 +111,7 @@ angular.module("Genoverse", []).directive("genoverse", genoverse);
                                 labels: true,
                                 model: configureGenoverseModel('ensemblGene'),
                                 view: Genoverse.Track.View.Gene.Ensembl,
+                                controller: Genoverse.Track.Controller.Ensembl,
                             }),
                             Genoverse.Track.extend({
                                 name: 'Transcripts',
@@ -82,6 +119,7 @@ angular.module("Genoverse", []).directive("genoverse", genoverse);
                                 labels: true,
                                 model: configureGenoverseModel('ensemblTranscript'),
                                 view: Genoverse.Track.View.Transcript.Ensembl,
+                                controller: Genoverse.Track.Controller.Ensembl,
                             }),
                             Genoverse.Track.extend({
                                 name: 'RNAcentral',
@@ -90,13 +128,94 @@ angular.module("Genoverse", []).directive("genoverse", genoverse);
                                 labels: true,
                                 model: configureGenoverseModel('rnacentral'),
                                 view: Genoverse.Track.View.Transcript.Ensembl,
+                                controller: Genoverse.Track.Controller.Ensembl,
                             })
                         ]
                     };
 
-                    genoverseConfig = configureKaryotypeDisplay(genoverseConfig);
+                    // configure karyotype display
+                    if (isKaryotypeAvailable(scope.genome.species)) {
+                        genoverseConfig.plugins.push('karyotype');
+                        genoverseConfig.genome = 'grch38'; // determine dynamically when more karyotypes are available
+                    } else {
+                        genoverseConfig.chromosomeSize = Math.pow(10, 20); // should be greater than any chromosome size
+                    }
 
-                    return genoverseConfig;
+                    // create Genoverse browser
+                    scope.browser = new Genoverse(genoverseConfig);
+
+                    // karyotype is available only for a limited number of species,
+                    // so a placeholder div is used to replace the karyotype div
+                    // to keep the display consistent
+                    if (!isKaryotypeAvailable(scope.genome.species)) {
+                        element.find(".gv_wrapper").prepend(
+                            "<div class='genoverse_karyotype_placeholder'>" +
+                            "    <p>Karyotype display is not available</p>" +
+                            "</div>"
+                        );
+                    }
+
+                    // imperatively set the initial width of Genoverse
+                    setGenoverseWidth();
+                }
+
+                function setGenoverseToAngularWatches() {
+                    var speciesWatch = scope.$watch('browser.species', function(newValue, oldValue) {
+                        scope.genome = getGenomeByName(newValue);
+                    });
+
+                    var chrWatch = scope.$watch('browser.chr', function(newValue, oldValue) {
+                        scope.chromosome = newValue;
+                    });
+
+                    var startWatch = scope.$watch('browser.start', function(newValue, oldValue) {
+                        scope.start = newValue;
+                    });
+
+                    var endWatch = scope.$watch('browser.end', function(newValue, oldValue) {
+                        scope.end = newValue;
+                    });
+
+                    return [speciesWatch, chrWatch, startWatch, endWatch];
+                }
+
+                function setAngularToGenoverseWatches(genoverseToAngularWatches) {
+                    scope.$watch('start', function(newValue, oldValue) {
+                        scope.browser.setRange(newValue, scope.end, true);
+                    });
+
+                    scope.$watch('end', function(newValue, oldValue) {
+                        scope.browser.setRange(scope.start, newValue, true);
+                    });
+
+                    scope.$watch('genome', function(newValue, oldValue) {
+                        // destroy the old instance of browser and callbacks/watches
+                        genoverseToAngularWatches.forEach(function (element) { element(); }); // clear the old watches
+                        element.find('#genoverse').html(''); // clear the innerHtml of genoverse plugin
+                        delete scope.browser; // clear old instance of browser
+
+                        // set the default location for this genome
+                        scope.chromosome = newValue.example_location.chromosome;
+                        scope.start = newValue.example_location.start;
+                        scope.end = newValue.example_location.end;
+
+                        // create a new instance of browser and set the new watches for it
+                        render();
+                        registerGenoverseEvents();
+                        setGenoverseToAngularWatches();
+                    });
+
+                    scope.$watch('chromosome', function(newValue, oldValue) {
+                        // destroy the old instance of browser and callback/watches
+                        genoverseToAngularWatches.forEach(function (element) { element(); }); // clear the old watches
+                        element.find('#genoverse').html(''); // clear the innerHtml of genoverse plugin
+                        delete scope.browser; // clear old instance of browser
+
+                        // create a new instance of browser and set the new watches for it
+                        render();
+                        registerGenoverseEvents();
+                        setGenoverseToAngularWatches();
+                    })
                 }
 
                 /**
@@ -105,28 +224,28 @@ angular.module("Genoverse", []).directive("genoverse", genoverse);
                  */
                 function configureGenoverseModel(modelType) {
                     var model, url;
-                    var endpoint = getEnsemblOrEnsemblgenomesEndpoint(urlencodeSpecies(scope.genome.species));
+                    var endpoint = getEnsemblOrEnsemblgenomesEndpoint(scope.genome.species);
 
                     if (modelType === 'ensemblGene') {
                         // Ensembl Gene track
-                        url = '//__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=gene;content-type=application/json'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', urlencodeSpecies(scope.genome.species));
+                        url = '//__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=gene;content-type=application/json'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', $filter('urlencodeSpecies')(scope.genome.species));
                         model = Genoverse.Track.Model.Gene.Ensembl.extend({ url: url });
                     }
                     else if (modelType === 'ensemblTranscript') {
                         // Ensembl Transcript track
-                        url = '//__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', urlencodeSpecies(scope.genome.species));
+                        url = '//__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', $filter('urlencodeSpecies')(scope.genome.species));
                         model = Genoverse.Track.Model.Transcript.Ensembl.extend({ url: url });
                     }
                     else if (modelType === 'ensemblSequence') {
                         // Ensembl sequence view
-                        url = '//__ENDPOINT__/sequence/region/__SPECIES__/__CHR__:__START__-__END__?content-type=text/plain'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', urlencodeSpecies(scope.genome.species));
+                        url = '//__ENDPOINT__/sequence/region/__SPECIES__/__CHR__:__START__-__END__?content-type=text/plain'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', $filter('urlencodeSpecies')(scope.genome.species));
                         model = Genoverse.Track.Model.Sequence.Ensembl.extend({ url: url });
                     }
                     else if (modelType === 'rnacentral') {
                         // custom RNAcentral track
                         if (!window.location.origin) { window.location.origin = window.location.protocol + "//" + window.location.host + '/'; }
 
-                        url = window.location.origin + '/api/v1/overlap/region/__SPECIES__/__CHR__:__START__-__END__'.replace('__SPECIES__', urlencodeSpecies(scope.genome.species));
+                        url = window.location.origin + '/api/v1/overlap/region/__SPECIES__/__CHR__:__START__-__END__'.replace('__SPECIES__', $filter('urlencodeSpecies')(scope.genome.species));
                         model = Genoverse.Track.Model.Gene.Ensembl.extend({
                             url: url,
                             parseData: function (data) {
@@ -246,35 +365,8 @@ angular.module("Genoverse", []).directive("genoverse", genoverse);
                     // "saccharomyces_cerevisiae", "caenorhabditis_elegans"];
                     // "saccharomyces_cerevisiae", "caenorhabditis_elegans" could use either E! or EG
 
-                    return ensemblSpecies.indexOf(species) > -1 ? 'rest.ensembl.org' : 'rest.ensemblgenomes.org';
-                }
-
-                /**
-                 * Determine whether karyotype should be displayed.
-                 */
-                function configureKaryotypeDisplay(genoverseConfig) {
-                    if (is_karyotype_available(scope.genome.species)) {
-                        genoverseConfig.plugins.push('karyotype');
-                        genoverseConfig.genome = 'grch38'; // determine dynamically when more karyotypes are available
-                    } else {
-                        genoverseConfig.chromosomeSize = Math.pow(10, 20); // should be greater than any chromosome size
-                    }
-                    return genoverseConfig;
-                }
-
-                /**
-                 * Karyotype is supported only for a limited number of species,
-                 * so a placeholder div is used to replace the karyotype div
-                 * to keep the display consistent.
-                 */
-                function addKaryotypePlaceholder() {
-                    if (!isKaryotypeAvailable(urlencodeSpecies(scope.genome.species))) {
-                        $(".gv_wrapper").prepend(
-                            "<div class='genoverse_karyotype_placeholder'>" +
-                            "  <p>Karyotype display is not available</p>" +
-                            "</div>"
-                        );
-                    }
+                    var encoded = $filter('urlencodeSpecies')(species); // urlencoded species name
+                    return ensemblSpecies.indexOf(encoded) > -1 ? 'rest.ensembl.org' : 'rest.ensemblgenomes.org';
                 }
 
                 /**
@@ -285,8 +377,7 @@ angular.module("Genoverse", []).directive("genoverse", genoverse);
                 }
 
                 function speciesSupported(species) {
-                    console.log("species = ", species);
-                    var supportedSpecies = ["homo_sapiens"]; // TODO: support more species
+                    var supportedSpecies = ["Homo sapiens"]; // TODO: support more species
                     return supportedSpecies.indexOf(species) !== -1;
                 }
 
@@ -310,7 +401,12 @@ angular.module("Genoverse", []).directive("genoverse", genoverse);
                 function registerGenoverseEvents() {
                     // resize tracks after load
                     scope.browser.on({
+                        // this event is called, whenever the user updates the browser viewport location
                         afterSetRange: function () {
+                            // let angular update its model in response to coordinates change
+                            if (!scope.$$phase) scope.$apply(); // anti-pattern, but no other way to use FRP in angular
+
+                            // expand the tracks by programmatically clicking the resizer button
                             setTimeout(function() {
                                 element.find('.genoverse-wrap .resizer').click();
                             }, 1000);
@@ -319,22 +415,42 @@ angular.module("Genoverse", []).directive("genoverse", genoverse);
                 }
 
                 /**
-                 * Format the coordinates with commas as thousands separators.
-                 * http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+                 * Maximize Genoverse container width.
                  */
-                function numberWithCommas(x) {
-                    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                function setGenoverseWidth() {
+                    var w = element.find('.container').width();
+                    element.find('.wrap').width(w);
+                    element.find('#genoverse').width(w);
                 }
 
+
+                // Helper functions
+                // ----------------
+
                 /**
-                 * Replaces whitespaces with underscores in scientific names of species.
-                 * @param species (string} - scientific name of a speices with whitespaces, e.g. Homo Sapiens
-                 * @returns {string} - scientific name of species with whitespaces replaces with underscores
+                 * Returns an object from genomes Array by its species name or null, if not found.
+                 * @param name {string} e.g. "Homo sapiens" or "homo_sapiens" (like in url) or "human" (synonym)
+                 * @returns {Object || null} element of genomes Array
                  */
-                function urlencodeSpecies(species) {
-                    // Canis familiaris is a special case
-                    if (species == 'Canis familiaris') { species = 'Canis lupus familiaris'; }
-                    return species.replace(/ /g, '_').toLowerCase();
+                function getGenomeByName(name) {
+                    name = name.replace(/_/g, ' '); // if name was urlencoded, replace '_' with whitespaces
+
+                    for (var i = 0; i < genomes.length; i++) {
+                        if (name.toLowerCase() == genomes[i].species.toLowerCase()) { // test scientific name
+                            return genomes[i];
+                        }
+                        else { // if name is not a scientific name, may be it's a synonym?
+                            var synonyms = []; // convert all synonyms to lower case to make case-insensitive comparison
+
+                            genomes[i].synonyms.forEach(function(synonym) {
+                                synonyms.push(synonym.toLowerCase());
+                            });
+
+                            if (synonyms.indexOf(name.toLowerCase()) > -1) return genomes[i];
+                        }
+                    }
+
+                    return null; // if no match found, return null
                 }
             }
         };
