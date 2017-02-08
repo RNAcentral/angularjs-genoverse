@@ -1,5 +1,5 @@
 {
-  "name": "angular-genoverse",
+  "name": "angularjs-genoverse",
   "version": "1.0.0",
   "description": "An AngularJS (1.x) directive, wrapping the Genoverse genome browser.",
   "main": "genoverse.module.js",
