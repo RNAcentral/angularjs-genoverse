@@ -7,13 +7,13 @@
     "test:unit": "karma start --browsers Firefox --single-run",
     "test:e2e": "protractor test/e2e/protractor.conf.js",
     "clean": "rm -rf dist/*",
-    "concat": "cat src/*.js > dist/angular-genoverse.all.js",
-    "uglify": "uglifyjs --compress --mangle -o dist/angular-genoverse.min.js --source-map dist/angular-genoverse.min.js.map dist/angular-genoverse.all.js",
+    "concat": "cat src/*.js > dist/angularjs-genoverse.all.js",
+    "uglify": "uglifyjs --compress --mangle -o dist/angularjs-genoverse.min.js --source-map dist/angularjs-genoverse.min.js.map dist/angularjs-genoverse.all.js",
     "build": "npm run clean && npm run concat && npm run uglify"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BurkovBA/angular-genoverse.git"
+    "url": "git+https://github.com/BurkovBA/angularjs-genoverse.git"
   },
   "keywords": [
     "bioinformatics",
@@ -26,9 +26,9 @@
   "author": "Boris A. Burkov",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/BurkovBA/angular-genoverse/issues"
+    "url": "https://github.com/BurkovBA/angularjs-genoverse/issues"
   },
-  "homepage": "https://github.com/BurkovBA/angular-genoverse#readme",
+  "homepage": "https://github.com/BurkovBA/angularjs-genoverse#readme",
   "devDependencies": {
     "angular": "^1.6.2",
     "bootstrap": "^3.3.7",
