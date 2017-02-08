@@ -9,7 +9,8 @@
     "clean": "rm -rf dist/*",
     "concat": "cat src/*.js > dist/angularjs-genoverse.all.js",
     "uglify": "uglifyjs --compress --mangle -o dist/angularjs-genoverse.min.js --source-map dist/angularjs-genoverse.min.js.map dist/angularjs-genoverse.all.js",
-    "build": "npm run clean && npm run concat && npm run uglify"
+    "build": "npm run clean && npm run concat && npm run uglify",
+    "start": "http-server -a localhost -p 8000 -c-1 ./test/e2e"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "angular": "^1.6.2",
     "bootstrap": "^3.3.7",
+    "http-server": "^0.9.0",
     "jquery": "^3.1.1",
     "lite-server": "^2.2.2",
     "uglify-js": "^2.7.5"
