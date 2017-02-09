@@ -19,10 +19,7 @@
   "keywords": [
     "bioinformatics",
     "genome-browser",
-    "genoverse",
-    "angular",
-    "directive",
-    "component"
+    "angularjs-directives"
   ],
   "author": "Boris A. Burkov",
   "contributors": ["Anton I. Petrov"],
