@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <!DOCTYPE html>
-<html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="testApp">
+<html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -29,14 +29,57 @@ limitations under the License.
         <link rel="stylesheet" href="/lib/Genoverse/css/resizer.css">
         <link rel="stylesheet" href="/lib/Genoverse/css/trackControls.css">
         <link rel="stylesheet" href="/lib/Genoverse/css/tooltips.css">
+
+        <base href="/"/>
     </head>
 
-    <body>
-        <script src="/node_modules/jquery/dist/jquery.min.js"></script>
-        <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-        <script src="/node_modules/angular/angular.min.js"></script>
+    <body ng-app="Example">
+        <div ng-controller="GenoverseGenomeBrowser" class="container">
+            <div class="row">
+                <div class="col-md-12" role="main">
+
+                    <h1><i class="fa fa-map-marker"></i> Genome browser</h1>
+
+                    <p class="text-muted col-md-12">
+                        <i class="fa fa-info-circle"></i> Explore sequences
+                        alongside genes and transcripts from <a href="http://ensembl.org" class="text-muted">Ensembl</a>
+                        / <a href="http://ensemblgenomes.org/" class="text-muted">Ensembl Genomes</a>
+                    </p>
+
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-12">
+                            <label for="genomic-species-select">Species</label>
+                            <select id="genomic-species-select" class="form-control" ng-options="genome as genome.species for genome in genomes" ng-model="genome">
+                            </select>
+                        </div>
+                        <div class="ol-lg-2 col-md-2 col-sm-4">
+                            <label for="chromosome-input">Chromosome</label>
+                            <input type="text" class="form-control" id="chromosome-input" placeholder="Enter chromosome" ng-model="chromosome">
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-4">
+                            <label for="genomic-start-input">Start</label>
+                            <input type="number" class="form-control" id="genomic-start-input" placeholder="Enter start" ng-model="start">
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-4">
+                            <label for="genomic-end-input">End</label>
+                            <input type="number" class="form-control" id="genomic-end-input" placeholder="Enter end" ng-model="end">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+
+            <genoverse></genoverse>
+
+        </div>
+
+        <script src="/node_modules/jquery/dist/jquery.js"></script>
+        <script src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="/node_modules/angular/angular.js"></script>
         <script src="/lib/Genoverse/js/genoverse.combined.js"></script>
+        <script src="lib/Genoverse/js/genomes/grch38.js"></script>
         <script src="/app.js"></script>
-        <script src="/dist/angularjs-genoverse.min.js"></script>
+        <script src="/src/genoverse.module.js"></script>
     </body>
 </html>
