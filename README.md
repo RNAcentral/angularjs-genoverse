@@ -8,7 +8,7 @@ Read more about how to use the browser here: http://wtsi-web.github.io/Genoverse
 Example
 =======
 
-A complete example is available at: https://angularjs-genoverse.github.io.
+A complete example is available at: https://RNAcentral.github.io/angularjs-genoverse/
 
 Use this directive as a "web component" in your HTML:
 
