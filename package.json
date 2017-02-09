@@ -25,7 +25,8 @@
     "component"
   ],
   "author": "Boris A. Burkov",
-  "license": "MIT",
+  "contributors": ["Anton I. Petrov"],
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/BurkovBA/angularjs-genoverse/issues"
   },
