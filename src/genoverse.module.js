@@ -100,7 +100,7 @@
                 registerGenoverseEvents();
 
                 // resize genoverse on browser width changes - attach once only
-                window.onresize(setGenoverseWidth);
+                $('window').resize(setGenoverseWidth);
 
                 // Functions/methods
                 // -----------------
