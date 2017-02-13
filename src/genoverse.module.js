@@ -90,12 +90,6 @@
 
                 render();
 
-                // set Genoverse -> Angular data flow
-                var genoverseToAngularWatches = setGenoverseToAngularWatches();
-
-                // set Angular -> Genoverse data flow
-                setAngularToGenoverseWatches(genoverseToAngularWatches);
-
                 // these need to be re-attached on every re-creation of browser
                 registerGenoverseEvents();
 
@@ -432,6 +426,16 @@
                 function registerGenoverseEvents() {
                     // resize tracks after load
                     scope.browser.on({
+                        afterInit: function() {
+                            console.log("afterInit is called");
+
+                            // set Genoverse -> Angular data flow
+                            var genoverseToAngularWatches = setGenoverseToAngularWatches();
+
+                            // set Angular -> Genoverse data flow
+                            setAngularToGenoverseWatches(genoverseToAngularWatches);
+                        },
+
                         // this event is called, whenever the user updates the browser viewport location
                         afterSetRange: function () {
                             // let angular update its model in response to coordinates change
