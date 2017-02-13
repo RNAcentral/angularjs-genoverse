@@ -108,8 +108,8 @@
                 function render() {
                     var genoverseConfig = {
                         container: element.find('#genoverse'),
-                        // if we want to update url in response to location changes, here we go:
-                        urlParamTemplate: "chromosome=__CHR__&start=__START__&end=__END__",
+                        // if we want Genoverse itself to update url on scroll, say:
+                        // urlParamTemplate: "chromosome=__CHR__&start=__START__&end=__END__",
                         chr: scope.chromosome,
                         start: scope.start,
                         end: scope.end,
@@ -420,7 +420,7 @@
                  */
                 function chromosomeSizeAvailable() {
                     var chromosomes = [];
-                    for (var key in grch38) {  // in newer genomes, this is Genoverse.Genomes.grch38
+                    for (var key in Genoverse.Genomes.grch38) {
                         chromosomes.push(key);
                     }
                     return chromosomes.indexOf(scope.chromosome.toString())

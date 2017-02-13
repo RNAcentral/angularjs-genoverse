@@ -1,37 +1,46 @@
-.gv_karyotype_container {
+.gv-karyotype-plugin .gv-karyotype-container {
   height: 50px;
   overflow: hidden;
-  box-shadow: inset 0 0 33px -7px rgba(24, 36, 56, 0.97), inset 1px 1px 1px 0 black;
+  box-shadow: inset 0 0 33px -7px rgba(24, 36, 56, 0.97);
+  border: 1px solid #000;
+  background-color: #fff;
 }
 
-.gv_karyotype_container .gv_wrapper {
+.gv-karyotype-plugin .gv-karyotype-container .gv-wrapper {
   border: 0;
+  margin-left: 55px;
 }
 
-.gv_karyotype_container .gv_chromosome {
+.gv-karyotype-plugin .gv-karyotype-container .gv-chromosome {
   margin: 15px;
   position: relative;
+  height: calc(100% - 30px);
 }
 
-.gv_karyotype_container .image_container {
+.gv-karyotype-plugin .gv-karyotype-container .gv-image-container {
   box-shadow: 0 0 33px -7px #CCC inset;
 }
 
-.gv_karyotype_container .gv_karyotype_viewpoint {
+.gv-karyotype-plugin .gv-karyotype-container .gv-karyotype-viewpoint-wrapper {
+  position: relative;
+  height: 70%;
+  top: -85%;
+  margin: 0 15px 0 70px;
+}
+
+.gv-karyotype-plugin .gv-karyotype-container .gv-karyotype-viewpoint {
   background-color: rgba(222, 84, 35, 0.37);
   border: 1px dashed #E6380D;
   box-shadow: 0 0 3px 2px rgba(237, 237, 237, 0.4) inset, 0 0 4px 0 rgba(116, 116, 116, 0.7);
-  height: 170%;
+  height: 100%;
   position: absolute;
-  top: -40%;
   z-index: 50;
-  cursor: hand;
   cursor: grab;
   cursor: -moz-grab;
   cursor: -webkit-grab;
 }
 
-.gv_karyotype_container .ui-resizable-e {
+.gv-karyotype-plugin .gv-karyotype-container .ui-resizable-e {
   cursor: e-resize;
   height: 100%;
   right: -5px;
@@ -39,7 +48,7 @@
   width: 7px;
 }
 
-.gv_karyotype_container .ui-resizable-w {
+.gv-karyotype-plugin .gv-karyotype-container .ui-resizable-w {
   cursor: w-resize;
   height: 100%;
   left: -5px;
@@ -47,8 +56,31 @@
   width: 7px;
 }
 
-.gv_karyotype_container .ui-resizable-handle {
+.gv-karyotype-plugin .gv-karyotype-container .ui-resizable-handle {
   display: block;
   font-size: 0.1px;
   position: absolute;
+}
+
+.gv-karyotype-plugin .gv-karyotype-container .gv-chromosome .gv-label-container {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  width: 55px;
+  cursor: default;
+}
+
+.gv-karyotype-plugin .gv-karyotype-container .gv-chromosome .gv-label-container .gv-name {
+  color: #000;
+  left: 0px !important;
+  text-shadow: none;
+  margin: 0px;
+}
+
+.gv-karyotype-plugin .gv-karyotype-container.gv-no-label .gv-wrapper {
+  margin-left: 0;
+}
+
+.gv-karyotype-plugin .gv-karyotype-container.gv-no-label .gv-karyotype-viewpoint-wrapper {
+  margin-left: 15px;
 }
