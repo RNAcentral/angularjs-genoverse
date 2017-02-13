@@ -298,12 +298,9 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
     $scope.start = 73792205;
     $scope.end = 73829231;
 
-    // reflect any changes in genome/chromosome/start/end in address bar
+    // reflect any changes in genome in address bar
     $scope.$watch('genome', setUrl);
-    $scope.$watch('chromosome', setUrl);
-    $scope.$watch('start', setUrl);
-    $scope.$watch('end', setUrl);
-
+    $scope.$watch('chromosome', setUrl)
 
     // Method definitions
     // ------------------

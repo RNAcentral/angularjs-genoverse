@@ -108,6 +108,8 @@
                 function render() {
                     var genoverseConfig = {
                         container: element.find('#genoverse'),
+                        // if we want to update url in response to location changes, here we go:
+                        urlParamTemplate: "chromosome=__CHR__&start=__START__&end=__END__",
                         chr: scope.chromosome,
                         start: scope.start,
                         end: scope.end,
@@ -122,7 +124,8 @@
                                 view: Genoverse.Track.View.Sequence,
                                 controller: Genoverse.Track.Controller.Sequence,
                                 resizable: 'auto',
-                                100000: false,
+                                autoHeight: true,
+                                100000: false
                             }),
                             Genoverse.Track.extend({
                                 name: 'Genes',
@@ -131,6 +134,7 @@
                                 model: configureGenoverseModel('ensemblGene'),
                                 view: Genoverse.Track.View.Gene.Ensembl,
                                 controller: Genoverse.Track.Controller.Ensembl,
+                                autoHeight: true
                             }),
                             Genoverse.Track.extend({
                                 name: 'Transcripts',
@@ -139,6 +143,7 @@
                                 model: configureGenoverseModel('ensemblTranscript'),
                                 view: Genoverse.Track.View.Transcript.Ensembl,
                                 controller: Genoverse.Track.Controller.Ensembl,
+                                autoHeight: true
                             }),
                             Genoverse.Track.extend({
                                 name: 'RNAcentral',
@@ -148,6 +153,7 @@
                                 model: configureGenoverseModel('rnacentral'),
                                 view: Genoverse.Track.View.Transcript.Ensembl,
                                 controller: Genoverse.Track.Controller.Ensembl,
+                                autoHeight: true
                             })
                         ]
                     };
@@ -414,7 +420,7 @@
                  */
                 function chromosomeSizeAvailable() {
                     var chromosomes = [];
-                    for (var key in grch38) { // TODO: WHERE IS THIS grch38 VARIABLE DEFINED? IS IT GLOBAL?
+                    for (var key in grch38) {  // in newer genomes, this is Genoverse.Genomes.grch38
                         chromosomes.push(key);
                     }
                     return chromosomes.indexOf(scope.chromosome.toString())
@@ -429,12 +435,8 @@
                         // this event is called, whenever the user updates the browser viewport location
                         afterSetRange: function () {
                             // let angular update its model in response to coordinates change
-                            if (!scope.$$phase) scope.$apply(); // anti-pattern, but no other way to use FRP in angular
-
-                            // expand the tracks by programmatically clicking the resizer button
-                            setTimeout(function() {
-                                element.find('.genoverse-wrap .resizer').click();
-                            }, 1000);
+                            // that's an anti-pattern, but no other way to use FRP in angular
+                            if (!scope.$$phase) scope.$apply();
                         }
                     });
                 }
