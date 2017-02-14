@@ -108,7 +108,7 @@
                         start: scope.start,
                         end: scope.end,
                         species: scope.genome.species,
-                        plugins: ['controlPanel', 'resizer', 'fileDrop', 'karyotype'],
+                        plugins: ['controlPanel', 'resizer', 'fileDrop'],
                         tracks: [
                             Genoverse.Track.Scalebar,
                             Genoverse.Track.extend({
