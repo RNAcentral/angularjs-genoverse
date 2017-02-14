@@ -90,8 +90,8 @@
 
                 render();
 
-                // these need to be re-attached on every re-creation of browser
-                registerGenoverseEvents();
+                // set Angular -> Genoverse data flow
+                setAngularToGenoverseWatches();
 
                 // resize genoverse on browser width changes - attach once only
                 $('window').resize(setGenoverseWidth);
@@ -160,25 +160,42 @@
                         genoverseConfig.chromosomeSize = Math.pow(10, 20); // should be greater than any chromosome size
                     }
 
-                    // create Genoverse browser
-                    scope.browser = new Genoverse(genoverseConfig);
-
                     // get domain for Ensembl links
                     scope.domain = getEnsebmlSubdomainByDivision(scope.genome);
 
-                    // karyotype is available only for a limited number of species,
-                    // so a placeholder div is used to replace the karyotype div
-                    // to keep the display consistent
-                    if (!isKaryotypeAvailable(scope.genome.species)) {
-                        element.find(".gv_wrapper").prepend(
-                            "<div class='genoverse_karyotype_placeholder'>" +
-                            "    <p>Karyotype display is not available</p>" +
-                            "</div>"
-                        );
-                    }
+                    // create Genoverse browser
+                    scope.browser = new Genoverse(genoverseConfig);
 
-                    // imperatively set the initial width of Genoverse
-                    setGenoverseWidth();
+                    // set browser -> Angular data flow
+                    scope.browser.on({
+                        afterInit: function() {
+                            console.log("afterInit is called");
+
+                            // set Genoverse -> Angular data flow
+                            scope.genoverseToAngularWatches = setGenoverseToAngularWatches();
+
+                            // karyotype is available only for a limited number of species,
+                            // so a placeholder div is used to replace the karyotype div
+                            // to keep the display consistent
+                            if (!isKaryotypeAvailable(scope.genome.species)) {
+                                element.find(".gv_wrapper").prepend(
+                                    "<div class='genoverse_karyotype_placeholder'>" +
+                                    "    <p>Karyotype display is not available</p>" +
+                                    "</div>"
+                                );
+                            }
+
+                            // imperatively set the initial width of Genoverse
+                            setGenoverseWidth();
+                        },
+
+                        // this event is called, whenever the user updates the browser viewport location
+                        afterSetRange: function () {
+                            // let angular update its model in response to coordinates change
+                            // that's an anti-pattern, but no other way to use FRP in angular
+                            if (!scope.$$phase) scope.$apply();
+                        }
+                    });
                 }
 
                 function setGenoverseToAngularWatches() {
@@ -202,7 +219,7 @@
                     return [speciesWatch, chrWatch, startWatch, endWatch];
                 }
 
-                function setAngularToGenoverseWatches(genoverseToAngularWatches) {
+                function setAngularToGenoverseWatches() {
                     scope.$watch('start', function(newValue, oldValue) {
                         scope.browser.setRange(newValue, scope.end, true);
                     });
@@ -212,8 +229,8 @@
                     });
 
                     scope.$watch('genome', function(newValue, oldValue) {
-                        // destroy the old instance of browser and callbacks/watches
-                        genoverseToAngularWatches.forEach(function (element) { element(); }); // clear the old watches
+                        // destroy the old instance of browser and watches
+                        scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
                         element.find('#genoverse').html(''); // clear the innerHtml of genoverse plugin
                         delete scope.browser; // clear old instance of browser
 
@@ -226,20 +243,16 @@
 
                         // create a new instance of browser and set the new watches for it
                         render();
-                        registerGenoverseEvents();
-                        setGenoverseToAngularWatches();
                     });
 
                     scope.$watch('chromosome', function(newValue, oldValue) {
-                        // destroy the old instance of browser and callback/watches
-                        genoverseToAngularWatches.forEach(function (element) { element(); }); // clear the old watches
+                        // destroy the old instance of browser and watches
+                        scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
                         element.find('#genoverse').html(''); // clear the innerHtml of genoverse plugin
                         delete scope.browser; // clear old instance of browser
 
                         // create a new instance of browser and set the new watches for it
                         render();
-                        registerGenoverseEvents();
-                        setGenoverseToAngularWatches();
                     })
                 }
 
@@ -418,31 +431,6 @@
                         chromosomes.push(key);
                     }
                     return chromosomes.indexOf(scope.chromosome.toString())
-                }
-
-                /**
-                 * Register custom Genoverse events.
-                 */
-                function registerGenoverseEvents() {
-                    // resize tracks after load
-                    scope.browser.on({
-                        afterInit: function() {
-                            console.log("afterInit is called");
-
-                            // set Genoverse -> Angular data flow
-                            var genoverseToAngularWatches = setGenoverseToAngularWatches();
-
-                            // set Angular -> Genoverse data flow
-                            setAngularToGenoverseWatches(genoverseToAngularWatches);
-                        },
-
-                        // this event is called, whenever the user updates the browser viewport location
-                        afterSetRange: function () {
-                            // let angular update its model in response to coordinates change
-                            // that's an anti-pattern, but no other way to use FRP in angular
-                            if (!scope.$$phase) scope.$apply();
-                        }
-                    });
                 }
 
                 /**
