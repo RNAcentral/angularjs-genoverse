@@ -103,13 +103,12 @@
                     var genoverseConfig = {
                         container: element.find('#genoverse'),
                         // if we want Genoverse itself to update url on scroll, say:
-                        // urlParamTemplate: "chromosome=__CHR__&start=__START__&end=__END__",
+                        urlParamTemplate: false, // or set to: "chromosome=__CHR__&start=__START__&end=__END__",
                         chr: scope.chromosome,
                         start: scope.start,
                         end: scope.end,
                         species: scope.genome.species,
-                        showUrlCoords: false, // do not show genomic coordinates in the url
-                        plugins: ['controlPanel', 'resizer', 'fileDrop'],
+                        plugins: ['controlPanel', 'resizer', 'fileDrop', 'karyotype'],
                         tracks: [
                             Genoverse.Track.Scalebar,
                             Genoverse.Track.extend({
@@ -220,12 +219,14 @@
                 function setAngularToGenoverseWatches() {
                     scope.$watch('start', function(newValue, oldValue) {
                         if (!angular.equals(newValue, oldValue)) {
+                            // scope.browser.moveTo(scope.chromosome, newValue, scope.end, true);
                             scope.browser.setRange(newValue, scope.end, true);
                         }
                     });
 
                     scope.$watch('end', function(newValue, oldValue) {
                         if (!angular.equals(newValue, oldValue)) {
+                            // scope.browser.moveTo(scope.chromosome, scope.start, newValue, true);
                             scope.browser.setRange(scope.start, newValue, true);
                         }
                     });
