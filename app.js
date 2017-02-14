@@ -19,7 +19,6 @@ angular.module('Example').config(['$locationProvider', function($locationProvide
 }]);
 
 angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$location', '$filter', function ($scope, $location, $filter) {
-
     // Constructor
     // -----------
 

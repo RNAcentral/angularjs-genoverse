@@ -168,9 +168,7 @@
 
                     // set browser -> Angular data flow
                     scope.browser.on({
-                        afterInit: function() {
-                            console.log("afterInit is called");
-
+                        afterInit: function() { // when genoverse is already initialized, attach watches to it
                             // set Genoverse -> Angular data flow
                             scope.genoverseToAngularWatches = setGenoverseToAngularWatches();
 
@@ -221,38 +219,44 @@
 
                 function setAngularToGenoverseWatches() {
                     scope.$watch('start', function(newValue, oldValue) {
-                        scope.browser.setRange(newValue, scope.end, true);
+                        if (!angular.equals(newValue, oldValue)) {
+                            scope.browser.setRange(newValue, scope.end, true);
+                        }
                     });
 
                     scope.$watch('end', function(newValue, oldValue) {
-                        scope.browser.setRange(scope.start, newValue, true);
+                        if (!angular.equals(newValue, oldValue)) {
+                            scope.browser.setRange(scope.start, newValue, true);
+                        }
                     });
 
                     scope.$watch('genome', function(newValue, oldValue) {
-                        // destroy the old instance of browser and watches
-                        scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
-                        element.find('#genoverse').html(''); // clear the innerHtml of genoverse plugin
-                        delete scope.browser; // clear old instance of browser
+                        if (!angular.equals(newValue, oldValue)) {
+                            // destroy the old instance of browser and watches
+                            scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
+                            element.find('#genoverse').html(''); // clear the innerHtml of genoverse plugin
+                            delete scope.browser; // clear old instance of browser
 
-                        // if the genome has changed, set the default location for the browser
-                        if (newValue !== oldValue){
+                            // set the default location for the browser
                             scope.chromosome = newValue.example_location.chromosome;
                             scope.start = newValue.example_location.start;
                             scope.end = newValue.example_location.end;
-                        }
 
-                        // create a new instance of browser and set the new watches for it
-                        render();
+                            // create a new instance of browser and set the new watches for it
+                            render();
+                        }
                     });
 
                     scope.$watch('chromosome', function(newValue, oldValue) {
-                        // destroy the old instance of browser and watches
-                        scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
-                        element.find('#genoverse').html(''); // clear the innerHtml of genoverse plugin
-                        delete scope.browser; // clear old instance of browser
+                        if (!angular.equals(newValue, oldValue)) {
+                            // destroy the old instance of browser and watches
+                            scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
+                            element.find('#genoverse').html(''); // clear the innerHtml of genoverse plugin
+                            delete scope.browser; // clear old instance of browser
 
-                        // create a new instance of browser and set the new watches for it
-                        render();
+                            // create a new instance of browser and set the new watches for it
+                            render();
+                        }
                     })
                 }
 
