@@ -234,7 +234,7 @@
                         if (!angular.equals(newValue, oldValue)) {
                             // destroy the old instance of browser and watches
                             scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
-                            element.find('#genoverse').html(''); // clear the innerHtml of genoverse plugin
+                            scope.browser.destroy(); // destroy genoverse and all callbacks and ajax requests
                             delete scope.browser; // clear old instance of browser
 
                             // set the default location for the browser
@@ -251,7 +251,7 @@
                         if (!angular.equals(newValue, oldValue)) {
                             // destroy the old instance of browser and watches
                             scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
-                            element.find('#genoverse').html(''); // clear the innerHtml of genoverse plugin
+                            scope.browser.destroy(); // destroy genoverse and all callbacks and ajax requests
                             delete scope.browser; // clear old instance of browser
 
                             // create a new instance of browser and set the new watches for it
