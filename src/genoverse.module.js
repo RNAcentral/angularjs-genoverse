@@ -162,6 +162,9 @@
                             // set Genoverse -> Angular data flow
                             scope.genoverseToAngularWatches = setGenoverseToAngularWatches();
 
+                            // set Angular -> Genoverse data flow
+                            scope.angularToGenoverseWatches = setAngularToGenoverseWatches();
+
                             // imperatively set the initial width of Genoverse
                             setGenoverseWidth();
                         },
@@ -173,9 +176,6 @@
                             if (!scope.$$phase) scope.$apply();
                         }
                     });
-
-                    // set Angular -> Genoverse data flow
-                    scope.angularToGenoverseWatches = setAngularToGenoverseWatches();
                 }
 
                 function setGenoverseToAngularWatches() {
