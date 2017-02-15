@@ -167,6 +167,8 @@
 
                             // imperatively set the initial width of Genoverse
                             setGenoverseWidth();
+
+                            if (!scope.$$phase) scope.$apply();
                         },
 
                         // this event is called, whenever the user updates the browser viewport location
