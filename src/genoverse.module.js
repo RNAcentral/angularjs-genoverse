@@ -391,20 +391,6 @@
                 }
 
                 /**
-                 * Get a list of chromosomes from the karyotype object and determine
-                 * whether the size of the displayed region is known.
-                 * Some RNAs are defined on scaffolds or other non-chromosomal objects
-                 * for which the size is not stored in the karyotype object.
-                 */
-                function chromosomeSizeAvailable() {
-                    var chromosomes = [];
-                    for (var key in Genoverse.Genomes.grch38) {
-                        chromosomes.push(key);
-                    }
-                    return chromosomes.indexOf(scope.chromosome.toString())
-                }
-
-                /**
                  * Maximize Genoverse container width.
                  */
                 function setGenoverseWidth() {
