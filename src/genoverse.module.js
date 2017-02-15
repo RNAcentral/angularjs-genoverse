@@ -90,9 +90,6 @@
 
                 render();
 
-                // set Angular -> Genoverse data flow
-                setAngularToGenoverseWatches();
-
                 // resize genoverse on browser width changes - attach once only
                 $('window').resize(setGenoverseWidth);
 
@@ -108,7 +105,7 @@
                         start: scope.start,
                         end: scope.end,
                         species: scope.genome.species,
-                        plugins: ['controlPanel', 'resizer', 'fileDrop'],
+                        plugins: ['controlPanel', 'karyotype', 'resizer', 'fileDrop'],
                         tracks: [
                             Genoverse.Track.Scalebar,
                             Genoverse.Track.extend({
@@ -151,13 +148,7 @@
                         ]
                     };
 
-                    // configure karyotype display
-                    if (isKaryotypeAvailable(scope.genome.species)) {
-                        genoverseConfig.plugins.push('karyotype');
-                        genoverseConfig.genome = 'grch38'; // determine dynamically when more karyotypes are available
-                    } else {
-                        genoverseConfig.chromosomeSize = Math.pow(10, 20); // should be greater than any chromosome size
-                    }
+                    genoverseConfig.genome = scope.genome.species.toLowerCase().replace(/ /g, '_');
 
                     // get domain for Ensembl links
                     scope.domain = getEnsebmlSubdomainByDivision(scope.genome);
@@ -171,17 +162,6 @@
                             // set Genoverse -> Angular data flow
                             scope.genoverseToAngularWatches = setGenoverseToAngularWatches();
 
-                            // karyotype is available only for a limited number of species,
-                            // so a placeholder div is used to replace the karyotype div
-                            // to keep the display consistent
-                            if (!isKaryotypeAvailable(scope.genome.species)) {
-                                element.find(".gv_wrapper").prepend(
-                                    "<div class='genoverse_karyotype_placeholder'>" +
-                                    "    <p>Karyotype display is not available</p>" +
-                                    "</div>"
-                                );
-                            }
-
                             // imperatively set the initial width of Genoverse
                             setGenoverseWidth();
                         },
@@ -193,6 +173,9 @@
                             if (!scope.$$phase) scope.$apply();
                         }
                     });
+
+                    // set Angular -> Genoverse data flow
+                    scope.angularToGenoverseWatches = setAngularToGenoverseWatches();
                 }
 
                 function setGenoverseToAngularWatches() {
@@ -217,24 +200,29 @@
                 }
 
                 function setAngularToGenoverseWatches() {
-                    scope.$watch('start', function(newValue, oldValue) {
+                    var startWatch = scope.$watch('start', function(newValue, oldValue) {
                         if (!angular.equals(newValue, oldValue)) {
-                            // scope.browser.moveTo(scope.chromosome, newValue, scope.end, true);
-                            scope.browser.setRange(newValue, scope.end, true);
+                            scope.browser.moveTo(scope.chromosome, newValue, scope.end, true);
                         }
                     });
 
-                    scope.$watch('end', function(newValue, oldValue) {
+                    var endWatch = scope.$watch('end', function(newValue, oldValue) {
                         if (!angular.equals(newValue, oldValue)) {
-                            // scope.browser.moveTo(scope.chromosome, scope.start, newValue, true);
-                            scope.browser.setRange(scope.start, newValue, true);
+                            scope.browser.moveTo(scope.chromosome, scope.start, newValue, true);
                         }
                     });
 
-                    scope.$watch('genome', function(newValue, oldValue) {
+                    var chrWatch = scope.$watch('chromosome', function(newValue, oldValue) {
+                        if (!angular.equals(newValue, oldValue)) {
+                            scope.browser.moveTo(newValue, scope.start, scope.end, true);
+                        }
+                    });
+
+                    var speciesWatch = scope.$watch('genome', function(newValue, oldValue) {
                         if (!angular.equals(newValue, oldValue)) {
                             // destroy the old instance of browser and watches
                             scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
+                            scope.angularToGenoverseWatches.forEach(function (element) { element(); }); // clear old watches
                             scope.browser.destroy(); // destroy genoverse and all callbacks and ajax requests
                             delete scope.browser; // clear old instance of browser
 
@@ -248,17 +236,7 @@
                         }
                     });
 
-                    scope.$watch('chromosome', function(newValue, oldValue) {
-                        if (!angular.equals(newValue, oldValue)) {
-                            // destroy the old instance of browser and watches
-                            scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
-                            scope.browser.destroy(); // destroy genoverse and all callbacks and ajax requests
-                            delete scope.browser; // clear old instance of browser
-
-                            // create a new instance of browser and set the new watches for it
-                            render();
-                        }
-                    })
+                    return [speciesWatch, chrWatch, startWatch, endWatch];
                 }
 
                 /**
@@ -410,18 +388,6 @@
 
                     var encoded = $filter('urlencodeSpecies')(species); // urlencoded species name
                     return ensemblSpecies.indexOf(encoded) > -1 ? 'rest.ensembl.org' : 'rest.ensemblgenomes.org';
-                }
-
-                /**
-                 * Determine if karyotype information is available for this species.
-                 */
-                function isKaryotypeAvailable(species) {
-                    return speciesSupported(species) && chromosomeSizeAvailable();
-                }
-
-                function speciesSupported(species) {
-                    var supportedSpecies = ["Homo sapiens"]; // TODO: support more species
-                    return supportedSpecies.indexOf(species) !== -1;
                 }
 
                 /**
