@@ -3,7 +3,7 @@ describe("urlencodeSpecies", function() {
 
     }));
 
-    it("should ", function() {
-
+    it("should convert to uppercase", function() {
+        assert();
     });
 });

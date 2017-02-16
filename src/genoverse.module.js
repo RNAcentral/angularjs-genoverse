@@ -250,17 +250,17 @@
 
                     if (modelType === 'ensemblGene') {
                         // Ensembl Gene track
-                        url = '//__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=gene;content-type=application/json'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', $filter('urlencodeSpecies')(scope.genome.species));
+                        url = '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=gene;content-type=application/json'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', $filter('urlencodeSpecies')(scope.genome.species));
                         model = Genoverse.Track.Model.Gene.Ensembl.extend({ url: url });
                     }
                     else if (modelType === 'ensemblTranscript') {
                         // Ensembl Transcript track
-                        url = '//__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', $filter('urlencodeSpecies')(scope.genome.species));
+                        url = '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', $filter('urlencodeSpecies')(scope.genome.species));
                         model = Genoverse.Track.Model.Transcript.Ensembl.extend({ url: url });
                     }
                     else if (modelType === 'ensemblSequence') {
                         // Ensembl sequence view
-                        url = '//__ENDPOINT__/sequence/region/__SPECIES__/__CHR__:__START__-__END__?content-type=text/plain'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', $filter('urlencodeSpecies')(scope.genome.species));
+                        url = '__ENDPOINT__/sequence/region/__SPECIES__/__CHR__:__START__-__END__?content-type=text/plain'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', $filter('urlencodeSpecies')(scope.genome.species));
                         model = Genoverse.Track.Model.Sequence.Ensembl.extend({ url: url });
                     }
                     else if (modelType === 'rnacentral') {
@@ -388,7 +388,7 @@
                     // "saccharomyces_cerevisiae", "caenorhabditis_elegans" could use either E! or EG
 
                     var encoded = $filter('urlencodeSpecies')(species); // urlencoded species name
-                    return ensemblSpecies.indexOf(encoded) > -1 ? 'rest.ensembl.org' : 'rest.ensemblgenomes.org';
+                    return ensemblSpecies.indexOf(encoded) > -1 ? 'https://rest.ensembl.org' : 'http://rest.ensemblgenomes.org';
                 }
 
                 /**
