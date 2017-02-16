@@ -105,6 +105,7 @@
                         start: scope.start,
                         end: scope.end,
                         species: scope.genome.species,
+                        genome: $filter('urlencodeSpecies')(scope.genome.species),
                         plugins: ['controlPanel', 'karyotype', 'resizer', 'fileDrop'],
                         tracks: [
                             Genoverse.Track.Scalebar,
@@ -147,8 +148,6 @@
                             })
                         ]
                     };
-
-                    genoverseConfig.genome = scope.genome.species.toLowerCase().replace(/ /g, '_');
 
                     // get domain for Ensembl links
                     scope.domain = getEnsebmlSubdomainByDivision(scope.genome);
