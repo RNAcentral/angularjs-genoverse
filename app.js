@@ -313,6 +313,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         // set the full url
         $location.path("/" + $filter('urlencodeSpecies')($scope.genome.species)); // this filter's from Genoverse module
         $location.search({chromosome: $scope.chromosome, start: $scope.start, end: $scope.end});
+        $location.replace();
     }
 
 }]);
