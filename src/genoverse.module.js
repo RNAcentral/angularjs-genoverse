@@ -84,14 +84,13 @@
                 "<div id='genoverse'></div>" +
                 "</div>",
             link: function(scope, element, attrs) {
-
                 // Initialization
                 // --------------
 
                 render();
 
                 // resize genoverse on browser width changes - attach once only
-                $('window').resize(setGenoverseWidth);
+                $(window).on('resize', setGenoverseWidth);
 
                 // Functions/methods
                 // -----------------
@@ -99,6 +98,7 @@
                 function render() {
                     var genoverseConfig = {
                         container: element.find('#genoverse'),
+                        width: $('.container').width(),
                         // if we want Genoverse itself to update url on scroll, say:
                         urlParamTemplate: false, // or set to: "chromosome=__CHR__&start=__START__&end=__END__",
                         chr: scope.chromosome,
@@ -163,9 +163,6 @@
 
                             // set Angular -> Genoverse data flow
                             scope.angularToGenoverseWatches = setAngularToGenoverseWatches();
-
-                            // imperatively set the initial width of Genoverse
-                            setGenoverseWidth();
 
                             if (!scope.$$phase) scope.$apply();
                         },
@@ -279,11 +276,13 @@
                                         feature.label = feature.external_name;
                                         feature.exons = [];
                                         feature.cds   = [];
+                                        feature.chr   = feature.seq_region_name;
 
                                         this.insertFeature(feature);
                                     }
                                     else if (feature.feature_type === 'exon' && this.featuresById[feature.Parent]) {
                                         feature.id = feature.ID;
+                                        feature.chr = feature.seq_region_name;
 
                                         if (!this.featuresById[feature.Parent].exons[feature.id]) {
                                             this.featuresById[feature.Parent].exons.push(feature);
@@ -395,9 +394,11 @@
                  * Maximize Genoverse container width.
                  */
                 function setGenoverseWidth() {
-                    var w = element.find('.container').width();
-                    element.find('.wrap').width(w);
-                    element.find('#genoverse').width(w);
+                    var w = $('.container').width();
+                    scope.browser.setWidth(w);
+
+                    // resize might change viewport location - digest these changes
+                    if (!scope.$$phase) scope.$apply();
                 }
 
 
@@ -466,3 +467,4 @@
     }
 
 })();
+
