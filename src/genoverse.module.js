@@ -1,12 +1,5 @@
 (function() {
 
-    angular.module("Genoverse", [])
-        .filter("urlencodeSpecies", urlencodeSpecies)
-        .filter("urldecodeSpecies", urldecodeSpecies)
-        .filter("chrToUCSC", chrToUCSC)
-        .directive("genoverse", genoverse);
-
-
     function urlencodeSpecies() {
         /**
          * Replaces whitespaces with underscores in input string (assumed to be a scientific name of species)
@@ -23,6 +16,7 @@
             return input.replace(/ /g, '_').toLowerCase();
         }
     }
+    urlencodeSpecies.$inject = [];
 
     function urldecodeSpecies() {
         /**
@@ -40,6 +34,7 @@
             return output;
         }
     }
+    urldecodeSpecies.$inject = [];
 
     function chrToUCSC() {
         /**
@@ -56,6 +51,7 @@
             }
         }
     }
+    chrToUCSC.$inject = [];
 
     function genoverse($filter) {
         /**
@@ -475,6 +471,13 @@
             }
         };
     }
+    genoverse.$inject = ['$filter'];
+
+    angular.module("Genoverse", [])
+        .filter("urlencodeSpecies", urlencodeSpecies)
+        .filter("urldecodeSpecies", urldecodeSpecies)
+        .filter("chrToUCSC", chrToUCSC)
+        .directive("genoverse", genoverse);
 
 })();
 
