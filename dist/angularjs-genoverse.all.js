@@ -67,7 +67,12 @@
          */
         return {
             restrict: 'E',
-            scope: false,
+            scope: {
+                genome: '=',
+                chromosome: '=',
+                start: '=',
+                end: '='
+            },
             template:
                 "<div class='wrap genoverse-wrap'>" +
                 "    <p class='text-muted'>" +
@@ -481,12 +486,3 @@
 
 })();
 
-describe("urlencodeSpecies", function() {
-    beforeEach(inject(function() {
-
-    }));
-
-    it("should convert to uppercase", function() {
-        assert();
-    });
-});
