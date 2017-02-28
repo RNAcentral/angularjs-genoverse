@@ -397,7 +397,7 @@
                     // "saccharomyces_cerevisiae", "caenorhabditis_elegans" could use either E! or EG
 
                     var encoded = $filter('urlencodeSpecies')(species); // urlencoded species name
-                    return ensemblSpecies.indexOf(encoded) > -1 ? 'https://rest.ensembl.org' : 'http://rest.ensemblgenomes.org';
+                    return ensemblSpecies.indexOf(encoded) > -1 ? 'https://rest.ensembl.org' : 'https://rest.ensemblgenomes.org';
                 }
 
                 /**
