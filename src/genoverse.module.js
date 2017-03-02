@@ -53,7 +53,7 @@
     }
     chrToUCSC.$inject = [];
 
-    function genoverse($filter) {
+    function genoverse($filter, $timeout) {
         /**
          * Returns the directive definition object for genoverse directive.
          * It is meant to be used as follows:
@@ -175,14 +175,14 @@
                             // set Angular -> Genoverse data flow
                             scope.angularToGenoverseWatches = setAngularToGenoverseWatches();
 
-                            if (!scope.$$phase) scope.$apply();
+                            $timeout(angular.noop);
                         },
 
                         // this event is called, whenever the user updates the browser viewport location
                         afterSetRange: function () {
                             // let angular update its model in response to coordinates change
                             // that's an anti-pattern, but no other way to use FRP in angular
-                            if (!scope.$$phase) scope.$apply();
+                            $timeout(angular.noop);
                         }
                     });
                 }
@@ -476,7 +476,7 @@
             }
         };
     }
-    genoverse.$inject = ['$filter'];
+    genoverse.$inject = ['$filter', '$timeout'];
 
     angular.module("Genoverse", [])
         .filter("urlencodeSpecies", urlencodeSpecies)
