@@ -2,11 +2,15 @@ describe("genoverse directive spec", function() {
     var Homepage = function() {
         browser.get("http://localhost:8000/index.html");
 
-        this.genomicStartInput = element(by.css('.genomic-start-input'));
-        this.genomicEndInput = element(by.css('.gnomic-end-input'));
+        this.genomicStartInput = element(by.css('#genomic-start-input'));
+        expect((this.genomicStartInput).isPresent()).toBe(true);
+        this.genomicEndInput = element(by.css('#genomic-end-input'));
+        expect((this.genomicEndInput).isPresent()).toBe(true);
 
         this.gvScrollRightButton = element(by.css('.gv-scroll-right'));
-        this.gvWrapper = element(by.css('.gv-wrapper'));
+        expect((this.gvScrollRightButton).isPresent()).toBe(true);
+        this.gvWrapper = element.all(by.css('.gv-wrapper')).get(1);
+        expect((this.gvWrapper).isPresent()).toBe(true);
     };
 
     var page;
@@ -23,9 +27,9 @@ describe("genoverse directive spec", function() {
 
         var updatedStart = page.genomicStartInput.getAttribute('value');
         var updatedEnd = page.genomicEndInput.getAttribute('value');
-        
-        expect(updatedStart > initialStart).toBe(true);
-        expect(updatedEnd > initialEnd).toBe(true)
+
+        expect(updatedStart).toBeGreaterThan(initialStart);
+        expect(updatedEnd).toBeGreaterThan(initialEnd);
     });
 
     it("should update start and end locations in response to viewport drag", function() {
@@ -33,17 +37,17 @@ describe("genoverse directive spec", function() {
         var initialEnd = page.genomicEndInput.getAttribute('value');
 
         // drag canvas, increase coordinates
-        browser.action()
-            .mouseMove(this.gvWrapper, {x: 200, y: 100})
+        browser.actions()
+            .mouseMove(page.gvWrapper, {x: 200, y: 100})
             .mouseDown()
-            .mouseMove({x: 100, y: 100})
+            .mouseMove({x: -100, y: 0})
             .mouseUp()
             .perform();
 
         var updatedStart = page.genomicStartInput.getAttribute('value');
         var updatedEnd = page.genomicEndInput.getAttribute('value');
 
-        expect(updatedStart > initialStart).toBe(true);
-        expect(updatedEnd > initialEnd).toBe(true)
+        expect(updatedStart).toBeGreaterThan(initialStart);
+        expect(updatedEnd).toBeGreaterThan(initialEnd);
     })
 });
