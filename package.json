@@ -6,6 +6,7 @@
   "scripts": {
     "test:unit": "karma start --browsers Chrome --single-run",
     "test:e2e": "protractor test/e2e/protractor.conf.js",
+    "test:e2e:saucelabs": "protractor test/e2e/protractor.saucelabs.conf.js",
     "clean": "rm -rf dist/*",
     "concat": "cat `find . -path './src/*.js' -not -path './src/*.spec.js'` > dist/angularjs-genoverse.all.js",
     "uglify": "find . -path './src/*.js' -not -path './src/*.spec.js' | xargs uglifyjs --compress --mangle -o dist/angularjs-genoverse.min.js --source-map dist/angularjs-genoverse.min.js.map --source-map-url /dist/angularjs-genoverse.min.js.map --source-map-root /",
