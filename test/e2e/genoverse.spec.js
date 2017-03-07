@@ -19,6 +19,7 @@ describe("genoverse directive spec", function() {
         page = new Homepage()
     });
 
+
     it("should update start and end locations in response to viewport movement button", function() {
         var initialStart = page.genomicStartInput.getAttribute('value');
         var initialEnd = page.genomicEndInput.getAttribute('value');
@@ -31,6 +32,7 @@ describe("genoverse directive spec", function() {
         expect(updatedStart).toBeGreaterThan(initialStart);
         expect(updatedEnd).toBeGreaterThan(initialEnd);
     });
+
 
     it("should update start and end locations in response to viewport drag", function() {
         var initialStart = page.genomicStartInput.getAttribute('value');
@@ -49,5 +51,25 @@ describe("genoverse directive spec", function() {
 
         expect(updatedStart).toBeGreaterThan(initialStart);
         expect(updatedEnd).toBeGreaterThan(initialEnd);
-    })
+    });
+
+
+    it("should keep url, browser address line, forms and hyperlinks in sync", function() {
+
+    });
+
+    it("should be able to leave the page", function() {
+
+    });
+
+
+    it("should survive switcing to a wrong species", function() {
+
+    });
+
+
+    it("should survive wrong coordinates", function() {
+
+    });
+
 });
