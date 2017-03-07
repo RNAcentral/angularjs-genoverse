@@ -5,14 +5,20 @@ node_js:
 cache:
   directories:
   - node_modules
+
 notifications:
   email: false
+
 addons:
   sauce_connect: true
+
 install:
 - npm prune && npm install
+- npm install -g uglify-js http-server protractor karma-cli
+
 before_script:
 - npm start
+
 script:
 - npm run test:e2e
 env:
