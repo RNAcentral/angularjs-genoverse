@@ -8,7 +8,7 @@ exports.config = {
         '*.spec.js'
     ],
 
-    baseUrl: 'http://localhost:80/',
+    baseUrl: 'http://localhost:8000/',
 
     sauceUser: process.env.SAUCE_USERNAME,
     sauceKey: process.env.SAUCE_ACCESS_KEY,
