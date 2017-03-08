@@ -20,7 +20,7 @@ install:
 - npm install -g uglify-js http-server protractor karma-cli
 
 before_script:
-- npm start
+- npm start &
 
 script:
 - npm run test:e2e:saucelabs
