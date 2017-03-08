@@ -16,6 +16,7 @@ describe("genoverse directive spec", function() {
     var page;
 
     beforeEach(function() {
+        browser.waitForAngular();
         page = new Homepage()
     });
 

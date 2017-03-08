@@ -86,6 +86,12 @@ exports.config = {
             'browserName': 'safari',
             'platform': 'OS X 10.11',
             'version': 9
+        }),
+        capabilities({
+            'name': 'Mac/Safari 10',
+            'browserName': 'safari',
+            'platform': 'OS X 10.12',
+            'version': 10
         })
     ],
 
