@@ -1,8 +1,9 @@
 // See:
 // https://github.com/angular/protractor/blob/master/lib/config.ts
+// https://gist.github.com/spenoir/e27dd5a4cb5cdd159ed9
 // https://www.ignoredbydinosaurs.com/posts/257-angular-protractor-tests-and-sauce-connect-config
 // https://github.com/esvit/ng-table/blob/master/e2e/protractor-travis.config.js
-
+// https://marmelab.com/blog/2014/12/12/protractor-in-ng-admin-angularjs-app.html
 
 /**
  * Updates the input config with a tunnel identifier, if we're running this on Travis CI.
@@ -70,7 +71,7 @@ exports.config = {
         }),
         capabilities({
             'name': 'Win10/Edge',
-            'browserName': 'edge',
+            'browserName': 'microsoftedge',
             'platform': 'Windows 10',
             'version': '13.10586'
         }),

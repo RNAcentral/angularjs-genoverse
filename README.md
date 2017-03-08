@@ -1,6 +1,8 @@
 AngularJS - Genoverse
 =====================
 
+[![Build Status](https://travis-ci.org/RNAcentral/angularjs-genoverse.svg?branch=master)](https://travis-ci.org/RNAcentral/angularjs-genoverse)
+
 An AngularJS (1.x) directive, wrapping the [Genoverse genome browser](https://github.com/wtsi-web/Genoverse).
 
 Read more about how to use the browser here: http://wtsi-web.github.io/Genoverse/
