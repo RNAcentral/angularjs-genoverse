@@ -40,59 +40,58 @@ exports.config = {
             'name': 'Linux/Firefox',
             'browserName': 'firefox'
         }),
-        capabilities({
-            'name': 'Win7/Firefox',
-            'browserName': 'firefox',
-            'platform': 'Windows 7'
-        }),
+        // capabilities({
+        //     'name': 'Win7/Firefox',
+        //     'browserName': 'firefox',
+        //     'platform': 'Windows 7'
+        // }),
         capabilities({
             'name': 'Win7/Chrome',
             'browserName': 'chrome',
             'platform': 'Windows 7'
-        })
-        ,
-        capabilities({
-            'name': 'Win7/IE9',
-            'browserName': 'internet explorer',
-            'platform': 'Windows 7',
-            'version': 9
         }),
-        capabilities({
-            'name': 'Win8/IE10',
-            'browserName': 'internet explorer',
-            'platform': 'Windows 8',
-            'version': 10
-        }),
-        capabilities({
-            'name': 'Win8.1/IE11',
-            'browserName': 'internet explorer',
-            'platform': 'Windows 8.1',
-            'version': 11
-        }),
+        // capabilities({
+        //     'name': 'Win7/IE9',
+        //     'browserName': 'internet explorer',
+        //     'platform': 'Windows 7',
+        //     'version': 9
+        // }),
+        // capabilities({
+        //     'name': 'Win8/IE10',
+        //     'browserName': 'internet explorer',
+        //     'platform': 'Windows 8',
+        //     'version': 10
+        // }),
+        // capabilities({
+        //     'name': 'Win8.1/IE11',
+        //     'browserName': 'internet explorer',
+        //     'platform': 'Windows 8.1',
+        //     'version': 11
+        // }),
         capabilities({
             'name': 'Win10/Edge',
             'browserName': 'microsoftedge',
             'platform': 'Windows 10',
             'version': '13.10586'
-        }),
-        capabilities({
-            'name': 'Mac/Safari 8',
-            'browserName': 'safari',
-            'platform': 'OS X 10.10',
-            'version': 8
-        }),
-        capabilities({
-            'name': 'Mac/Safari 9',
-            'browserName': 'safari',
-            'platform': 'OS X 10.11',
-            'version': 9
-        }),
-        capabilities({
-            'name': 'Mac/Safari 10',
-            'browserName': 'safari',
-            'platform': 'OS X 10.12',
-            'version': 10
         })
+        // capabilities({
+        //     'name': 'Mac/Safari 8',
+        //     'browserName': 'safari',
+        //     'platform': 'OS X 10.10',
+        //     'version': 8
+        // }),
+        // capabilities({
+        //     'name': 'Mac/Safari 9',
+        //     'browserName': 'safari',
+        //     'platform': 'OS X 10.11',
+        //     'version': 9
+        // }),
+        // capabilities({
+        //     'name': 'Mac/Safari 10',
+        //     'browserName': 'safari',
+        //     'platform': 'OS X 10.12',
+        //     'version': 10
+        // })
     ],
 
     framework: 'jasmine',
