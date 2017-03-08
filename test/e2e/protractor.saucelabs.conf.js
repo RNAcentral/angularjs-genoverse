@@ -3,6 +3,19 @@
 // https://www.ignoredbydinosaurs.com/posts/257-angular-protractor-tests-and-sauce-connect-config
 // https://github.com/esvit/ng-table/blob/master/e2e/protractor-travis.config.js
 
+
+/**
+ * Updates the input config with a tunnel identifier, if we're running this on Travis CI.
+ *
+ * @param {Object} config - normal capabilities property of protractor config
+ * @returns {Object} - config (same object!), updated with tunnel identifier,
+ *  if we're running this on travis instances with TRAVIS_JOB_NUMBER available
+ */
+function capabilities(config) {
+    if (process.env.TRAVIS_JOB_NUMBER) config['tunnel-identifier'] = process.env.TRAVIS_JOB_NUMBER;
+    return config;
+}
+
 exports.config = {
     specs: [
         '*.spec.js'
@@ -18,56 +31,56 @@ exports.config = {
     getPageTimeout: 10000,
 
     multiCapabilities: [
-        capabilitiesForSauceLabs({
+        capabilities({
             'name': 'Linux/Chrome',
             'browserName': 'chrome'
         }),
-        capabilitiesForSauceLabs({
+        capabilities({
             'name': 'Linux/Firefox',
             'browserName': 'firefox'
         }),
-        capabilitiesForSauceLabs({
+        capabilities({
             'name': 'Win7/Firefox',
             'browserName': 'firefox',
             'platform': 'Windows 7'
         }),
-        capabilitiesForSauceLabs({
+        capabilities({
             'name': 'Win7/Chrome',
             'browserName': 'chrome',
             'platform': 'Windows 7'
         })
         ,
-        capabilitiesForSauceLabs({
+        capabilities({
             'name': 'Win7/IE9',
             'browserName': 'internet explorer',
             'platform': 'Windows 7',
             'version': 9
         }),
-        capabilitiesForSauceLabs({
+        capabilities({
             'name': 'Win8/IE10',
             'browserName': 'internet explorer',
             'platform': 'Windows 8',
             'version': 10
         }),
-        capabilitiesForSauceLabs({
+        capabilities({
             'name': 'Win8.1/IE11',
             'browserName': 'internet explorer',
             'platform': 'Windows 8.1',
             'version': 11
         }),
-        capabilitiesForSauceLabs({
+        capabilities({
             'name': 'Win10/Edge',
             'browserName': 'edge',
             'platform': 'Windows 10',
             'version': '13.10586'
         }),
-        capabilitiesForSauceLabs({
+        capabilities({
             'name': 'Mac/Safari 8',
             'browserName': 'safari',
             'platform': 'OS X 10.10',
             'version': 8
         }),
-        capabilitiesForSauceLabs({
+        capabilities({
             'name': 'Mac/Safari 9',
             'browserName': 'safari',
             'platform': 'OS X 10.11',
