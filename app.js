@@ -290,82 +290,12 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         }
     ];
 
-    // from JS standpoint, genome and genomes[i] == genome are different objects, but we want exactly the same, so:
-    $scope.genome = genomes[0];
-
-    $scope.chromosome = "X";
-    $scope.start = 73792205;
-    $scope.end = 73829231;
-
-    $scope.tracks =
-
-
     /**
-     * Each Genoverse model is configured with an organism-specific url.
-     * In addition, a new RNAcentral models that's mimicking Ensembl API is defined.
-     */
-    function configureGenoverseModel(modelType) {
-        var model, url;
-        var endpoint = getEnsemblOrEnsemblgenomesEndpoint($scope.genome.species);
-
-        if (modelType === 'ensemblGene') {
-            // Ensembl Gene track
-            url = '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=gene;content-type=application/json'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', $filter('urlencodeSpecies')($scope.genome.species));
-            model = Genoverse.Track.Model.Gene.Ensembl.extend({ url: url });
-        }
-        else if (modelType === 'ensemblTranscript') {
-            // Ensembl Transcript track
-            url = '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', $filter('urlencodeSpecies')($scope.genome.species));
-            model = Genoverse.Track.Model.Transcript.Ensembl.extend({ url: url });
-        }
-        else if (modelType === 'ensemblSequence') {
-            // Ensembl sequence view
-            url = '__ENDPOINT__/sequence/region/__SPECIES__/__CHR__:__START__-__END__?content-type=text/plain'.replace('__ENDPOINT__', endpoint).replace('__SPECIES__', $filter('urlencodeSpecies')($scope.genome.species));
-            model = Genoverse.Track.Model.Sequence.Ensembl.extend({ url: url });
-        }
-        else if (modelType === 'rnacentral') {
-            // custom RNAcentral track
-            if (!window.location.origin) { window.location.origin = window.location.protocol + "//" + window.location.host + '/'; }
-
-            url = window.location.origin + '/api/v1/overlap/region/__SPECIES__/__CHR__:__START__-__END__'.replace('__SPECIES__', $filter('urlencodeSpecies')($scope.genome.species));
-            model = Genoverse.Track.Model.Gene.Ensembl.extend({
-                url: url,
-                parseData: function (data) {
-                    for (var i = 0; i < data.length; i++) {
-                        var feature = data[i];
-
-                        if (feature.feature_type === 'transcript' && !this.featuresById[feature.ID]) {
-                            feature.id    = feature.ID;
-                            feature.label = feature.external_name;
-                            feature.exons = [];
-                            feature.cds   = [];
-                            feature.chr   = feature.seq_region_name;
-
-                            this.insertFeature(feature);
-                        }
-                        else if (feature.feature_type === 'exon' && this.featuresById[feature.Parent]) {
-                            feature.id = feature.ID;
-                            feature.chr = feature.seq_region_name;
-
-                            if (!this.featuresById[feature.Parent].exons[feature.id]) {
-                                this.featuresById[feature.Parent].exons.push(feature);
-                                this.featuresById[feature.Parent].exons[feature.id] = feature;
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-      return model;
-    }
-
-    /**
-     * Dynamically choose whether to use E! or EG REST API based on species.
+     * Dynamically determine whether to use E! or EG REST API based on species.
      * If species not in E!, use EG.
      * Ensembl species list: http://www.ensembl.org/info/about/species.html
      */
-    function getEnsemblOrEnsemblgenomesEndpoint(species) {
+    function getEndpoint(species) {
         var ensemblSpecies = [
             "ailuropoda_melanoleuca",
             "anas_platyrhynchos",
@@ -453,57 +383,69 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         return ensemblSpecies.indexOf(encoded) > -1 ? 'https://rest.ensembl.org' : 'https://rest.ensemblgenomes.org';
     }
 
-// [
-//     Genoverse.Track.extend({
-//         name: 'Sequence',
-//         model: configureGenoverseModel('ensemblSequence'),
-//         view: Genoverse.Track.View.Sequence,
-//         controller: Genoverse.Track.Controller.Sequence,
-//         resizable: 'auto',
-//         autoHeight: true,
-//         100000: false
-//     }),
-//     Genoverse.Track.extend({
-//         name: 'Genes',
-//         info: 'Ensembl API genes',
-//         labels: true,
-//         model: configureGenoverseModel('ensemblGene'),
-//         view: Genoverse.Track.View.Gene.Ensembl,
-//         controller: Genoverse.Track.Controller.Ensembl,
-//         autoHeight: true
-//     }),
-//     Genoverse.Track.extend({
-//         name: 'Transcripts',
-//         info: 'Ensembl API transcripts',
-//         labels: true,
-//         model: configureGenoverseModel('ensemblTranscript'),
-//         view: Genoverse.Track.View.Transcript.Ensembl,
-//         controller: Genoverse.Track.Controller.Ensembl,
-//         autoHeight: true
-//     }),
-//     Genoverse.Track.extend({
-//         name: 'RNAcentral',
-//         id: 'RNAcentral',
-//         info: 'Unique RNAcentral Sequences',
-//         labels: true,
-//         model: configureGenoverseModel('rnacentral'),
-//         view: Genoverse.Track.View.Transcript.Ensembl,
-//         controller: Genoverse.Track.Controller.Ensembl,
-//         autoHeight: true,
-//         populateMenu: function(feature) {
-//             return {
-//                 title: '<a target=_blank href="http://rnacentral.org/rna/' + feature.label +'">'+ feature.label + '</a>',
-//                 id: feature.id,
-//                 biotype: feature.biotype,
-//                 start: feature.start,
-//                 end: feature.end,
-//                 strand: feature.strand
-//             };
-//         }
-//     })
-// ]
 
+    // from JS standpoint, genome and genomes[i] == genome are different objects, but we want exactly the same, so:
+    $scope.genome = genomes[0];
 
+    $scope.chromosome = "X";
+    $scope.start = 73792205;
+    $scope.end = 73829231;
+
+    // $scope.tracks is an array of functions, dynamically generating track configs based on $scope variables
+    $scope.tracks = [
+        function () { // Sequence track configuration
+            var species = $filter('urlencodeSpecies')($scope.genome.species);
+            var endpoint = getEndpoint(species);
+            var url = '__ENDPOINT__/sequence/region/__SPECIES__/__CHR__:__START__-__END__?content-type=text/plain'
+                .replace('__ENDPOINT__', endpoint)
+                .replace('__SPECIES__', species);
+
+            return Genoverse.Track.extend({
+                name: 'Sequence',
+                model: Genoverse.Track.Model.Sequence.Ensembl.extend({ url: url }),
+                view: Genoverse.Track.View.Sequence,
+                controller: Genoverse.Track.Controller.Sequence,
+                resizable: 'auto',
+                autoHeight: true,
+                100000: false
+            });
+        },
+
+        function() { // Genes track configuration
+            var species = $filter('urlencodeSpecies')($scope.genome.species);
+            var endpoint = getEndpoint(species);
+            var url = '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=gene;content-type=application/json'
+                .replace('__ENDPOINT__', endpoint)
+                .replace('__SPECIES__', species);
+
+            return Genoverse.Track.extend({
+                name: 'Genes',
+                info: 'Ensembl API genes',
+                labels: true,
+                model: Genoverse.Track.Model.Gene.Ensembl.extend({ url: url }),
+                view: Genoverse.Track.View.Gene.Ensembl,
+                controller: Genoverse.Track.Controller.Ensembl,
+                autoHeight: true
+            });
+        },
+        function() { // Transcripts track configuration
+            var species = $filter('urlencodeSpecies')($scope.genome.species);
+            var endpoint = getEndpoint(species);
+            var url = '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'
+                .replace('__ENDPOINT__', endpoint)
+                .replace('__SPECIES__', species);
+
+            return Genoverse.Track.extend({
+                name: 'Transcripts',
+                info: 'Ensembl API transcripts',
+                labels: true,
+                model: Genoverse.Track.Model.Transcript.Ensembl.extend({ url: url }),
+                view: Genoverse.Track.View.Transcript.Ensembl,
+                controller: Genoverse.Track.Controller.Ensembl,
+                autoHeight: true
+            });
+        }
+    ];
 
     // reflect any changes in genome in address bar
     $scope.$watch('genome', setUrl);
