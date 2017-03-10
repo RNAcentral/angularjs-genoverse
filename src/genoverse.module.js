@@ -287,7 +287,5 @@
         .filter("urlencodeSpecies", urlencodeSpecies)
         .filter("urldecodeSpecies", urldecodeSpecies)
         .filter("chrToUCSC", chrToUCSC)
-        .directive("genoverse", genoverse)
-        .directive("genoverseTrack", genoverseTrack);
-
+        .directive("genoverse", genoverse);
 })();
