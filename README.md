@@ -81,18 +81,7 @@ genoverse
 
 Attribute  | Type   | Required | Description
 ---------- | ------ | -------- | -----------
-genome     | Object | true     | {
-           |        |          |   'species': 'Homo sapiens',
-           |        |          |   'synonyms': ['human'],
-           |        |          |   'assembly': 'GRCh38',
-           |        |          |   'assembly_ucsc': 'hg38',
-           |        |          |   'taxid': 9606,
-           |        |          |   'division': 'Ensembl',
-           |        |          |   'example_location': {
-           |        |          |     'chromosome': 'X',
-           |        |          |     'start': 73792205,
-           |        |          |     'end': 73829231
-           |        |          | }
+genome     | Object | true     | {<br>   'species': 'Homo sapiens',<br>   'synonyms': ['human'],<br>   'assembly': 'GRCh38',<br>   'assembly_ucsc': 'hg38',<br>   'taxid': 9606,<br>   'division': 'Ensembl',<br>   'example_location': {<br>     'chromosome': 'X',<br>     'start': 73792205,<br>     'end': 73829231<br> }
 chromosome | String | true     | Ensembl-style chromosome name, e.g. 'X'
 start      | Number | true     | Current genome location, where viewport starts
 end        | Number | true     | Current genome location, where viewport ends
@@ -106,12 +95,12 @@ Attribute       | Type               | Required | Default | Description
 name            | String             | true     |         | Track id
 labels          | Boolean            | false    | true    | Display labels
 id              | String             | false    |         |
-model           | Object             | true     |         | Genoverse.Track.Model subclass
+model           | Object             | true     |         | `Genoverse.Track.Model` subclass
 modelExtra      | Object             | false    |         | Extra parameters to extend your model with: `model.extend(modelExtra)`
-url             | String OR Function | true     |         | String template or function that returns string template, where track gets features to display. E.g. 'https://rest.ensemblgenomes.org/sequence/region/homo_sapiens/__CHR__:__START__-__END__?content-type=text/plain'. Note that it uses `__CHR__`, `__START__` and `__END__` variables, but doesn't support a variable for species/genome.
-view            | Object             | true     |         | Genoverse.Track.View subclass
+url             | String OR Function | true     |         | String template or function that returns string template that track uses to download features data to display.<br><br> E.g. 'https://rest.ensemblgenomes.org/sequence/region/homo_sapiens/__CHR__:__START__-__END__?content-type=text/plain'.<br><br>Note that it uses `__CHR__`, `__START__` and `__END__` variables, but doesn't support a variable for species/genome.
+view            | Object             | true     |         | `Genoverse.Track.View` subclass
 viewExtra       | Object             | false    |         | Extra parameters to extend your view with: `view.extend(viewExtra)`
-controller      | Object             | true     |         | Genoverse.Track.Controller subclass
+controller      | Object             | true     |         | `Genoverse.Track.Controller` subclass
 controllerExtra | Object             | false    |         | Extra parameters to extend your controller with: `controller.extend(controllerExtra)`
 resizable       | String             | false    | 'auto'  | Allow user to resize tracks by dragging a handle?
 autoHeight      | Boolean            | false    | false   | Automatically resize tracks upon load to take as much space as is required to display all features
