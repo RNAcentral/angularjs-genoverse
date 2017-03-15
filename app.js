@@ -391,61 +391,64 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
     $scope.start = 73792205;
     $scope.end = 73829231;
 
-    // $scope.tracks is an array of functions, dynamically generating track configs based on $scope variables
-    $scope.tracks = [
-        function () { // Sequence track configuration
+    $scope.Genoverse = Genoverse;
+
+    $scope.urls = {
+        sequence: function () { // Sequence track configuration
             var species = $filter('urlencodeSpecies')($scope.genome.species);
             var endpoint = getEndpoint(species);
-            var url = '__ENDPOINT__/sequence/region/__SPECIES__/__CHR__:__START__-__END__?content-type=text/plain'
+            return '__ENDPOINT__/sequence/region/__SPECIES__/__CHR__:__START__-__END__?content-type=text/plain'
                 .replace('__ENDPOINT__', endpoint)
                 .replace('__SPECIES__', species);
-
-            return Genoverse.Track.extend({
-                name: 'Sequence',
-                model: Genoverse.Track.Model.Sequence.Ensembl.extend({ url: url }),
-                view: Genoverse.Track.View.Sequence,
-                controller: Genoverse.Track.Controller.Sequence,
-                resizable: 'auto',
-                autoHeight: true,
-                100000: false
-            });
         },
-
-        function() { // Genes track configuration
+        genes: function() { // Genes track configuration
             var species = $filter('urlencodeSpecies')($scope.genome.species);
             var endpoint = getEndpoint(species);
-            var url = '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=gene;content-type=application/json'
+            return '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=gene;content-type=application/json'
                 .replace('__ENDPOINT__', endpoint)
                 .replace('__SPECIES__', species);
-
-            return Genoverse.Track.extend({
-                name: 'Genes',
-                info: 'Ensembl API genes',
-                labels: true,
-                model: Genoverse.Track.Model.Gene.Ensembl.extend({ url: url }),
-                view: Genoverse.Track.View.Gene.Ensembl,
-                controller: Genoverse.Track.Controller.Ensembl,
-                autoHeight: true
-            });
         },
-        function() { // Transcripts track configuration
+        transcripts: function() { // Transcripts track configuration
             var species = $filter('urlencodeSpecies')($scope.genome.species);
             var endpoint = getEndpoint(species);
-            var url = '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'
+            return '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'
                 .replace('__ENDPOINT__', endpoint)
                 .replace('__SPECIES__', species);
-
-            return Genoverse.Track.extend({
-                name: 'Transcripts',
-                info: 'Ensembl API transcripts',
-                labels: true,
-                model: Genoverse.Track.Model.Transcript.Ensembl.extend({ url: url }),
-                view: Genoverse.Track.View.Transcript.Ensembl,
-                controller: Genoverse.Track.Controller.Ensembl,
-                autoHeight: true
-            });
         }
-    ];
+    };
+
+    // We want to achieve the following behavior declaratively:
+    //
+    // return Genoverse.Track.extend({
+    //     name: 'Sequence',
+    //     model: Genoverse.Track.Model.Sequence.Ensembl.extend({ url: url }),
+    //     view: Genoverse.Track.View.Sequence,
+    //     controller: Genoverse.Track.Controller.Sequence,
+    //     resizable: 'auto',
+    //     autoHeight: true,
+    //     100000: false
+    // });
+    //
+    // return Genoverse.Track.extend({
+    //     name: 'Genes',
+    //     info: 'Ensembl API genes',
+    //     labels: true,
+    //     model: Genoverse.Track.Model.Gene.Ensembl.extend({ url: url }),
+    //     view: Genoverse.Track.View.Gene.Ensembl,
+    //     controller: Genoverse.Track.Controller.Ensembl,
+    //     autoHeight: true
+    // });
+    //
+    // return Genoverse.Track.extend({
+    //     name: 'Transcripts',
+    //     info: 'Ensembl API transcripts',
+    //     labels: true,
+    //     model: Genoverse.Track.Model.Transcript.Ensembl.extend({ url: url }),
+    //     view: Genoverse.Track.View.Transcript.Ensembl,
+    //     controller: Genoverse.Track.Controller.Ensembl,
+    //     autoHeight: true
+    // });
+
 
     // reflect any changes in genome in address bar
     $scope.$watch('genome', setUrl);

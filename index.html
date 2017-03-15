@@ -84,7 +84,11 @@ limitations under the License.
 
             <br>
 
-            <genoverse genome="genome" chromosome="chromosome" start="start" end="end" tracks="tracks"></genoverse>
+            <genoverse genome="genome" chromosome="chromosome" start="start" end="end">
+                <genoverse-track name="Sequence" model="Genoverse.Track.Model.Sequence.Ensembl" view="Genoverse.Track.View.Sequence" controller="Genoverse.Track.Controller.Sequence" url="urls.sequence" resizable="auto" autoHeight="{{true}}" extra="{100000: false}"></genoverse-track>
+                <genoverse-track name="Genes" info="Ensembl API genes" model="Genoverse.Track.Model.Gene.Ensembl" view="Genoverse.Track.View.Gene.Ensembl" controller="Genoverse.Track.Controller.Ensembl" url="urls.genes" resizable="auto" autoHeight="{{true}}"></genoverse-track>
+                <genoverse-track name="Transcripts" info="Ensembl API transcripts" model="Genoverse.Track.Model.Transcript.Ensembl" view="Genoverse.Track.View.Transcript.Ensembl" controller="Genoverse.Track.Controller.Ensembl" url="urls.transcripts" resizable="auto" autoHeight="{{true}}"></genoverse-track>
+            </genoverse>
 
         </div>
 
