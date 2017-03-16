@@ -383,9 +383,44 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         return ensemblSpecies.indexOf(encoded) > -1 ? 'https://rest.ensembl.org' : 'https://rest.ensemblgenomes.org';
     }
 
+    /**
+     * Takes a genome on input, looks into its division attribute and returns the corresponding Ensembl
+     * subdomain
+     *
+     * @param genome {Object} e.g.
+     * {
+     *     'species': 'Mus musculus', 'synonyms': ['mouse'], 'assembly': 'GRCm38', 'assembly_ucsc': 'mm10',
+     *     'taxid': 10090, 'division': 'Ensembl',
+     *     'example_location': {'chromosome': 1, 'start': 86351981, 'end': 86352127,}
+     * }
+     * @returns {String} domain name without protocol or slashes or trailing dots
+     */
+    function getEnsemblSubdomainByDivision(genome) {
+        var subdomain;
+
+        if (genome.division == 'Ensembl') {
+            subdomain = 'ensembl.org';
+        } else if (genome.division == 'Ensembl Plants') {
+            subdomain = 'plants.ensembl.org';
+        } else if (genome.division == 'Ensembl Metazoa') {
+            subdomain = 'metazoa.ensembl.org';
+        } else if (genome.division == 'Ensembl Bacteria') {
+            subdomain = 'bacteria.ensembl.org';
+        } else if (genome.division == 'Ensembl Fungi') {
+            subdomain = 'fungi.ensembl.org';
+        } else if (genome.division == 'Ensembl Protists') {
+            subdomain = 'protists.ensembl.org';
+        }
+
+        return subdomain;
+    }
+
 
     // from JS standpoint, genome and genomes[i] == genome are different objects, but we want exactly the same, so:
     $scope.genome = genomes[0];
+
+    // get domain for Ensembl links
+    $scope.domain = getEnsemblSubdomainByDivision($scope.genome);
 
     $scope.chromosome = "X";
     $scope.start = 73819307;
@@ -456,6 +491,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
     $scope.$watch('start', setUrl);
     $scope.$watch('stop', setUrl);
 
+    $scope.$watch('genome', setDomain);
+
     // Method definitions
     // ------------------
 
@@ -467,6 +504,10 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         $location.path("/" + $filter('urlencodeSpecies')($scope.genome.species)); // this filter's from Genoverse module
         $location.search({chromosome: $scope.chromosome, start: $scope.start, end: $scope.end});
         $location.replace();
+    }
+
+    function setDomain(newValue, oldValue) {
+        $scope.domain = getEnsemblSubdomainByDivision(newValue);
     }
 
 }]);

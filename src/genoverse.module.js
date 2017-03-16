@@ -56,14 +56,6 @@
     function genoverse($filter, $timeout) {
         /**
          * Returns the directive definition object for genoverse directive.
-         * It is meant to be used as follows:
-         *
-         * <genoverse genome={} chromosome="X" start="1" stop="1000000">
-         *     <genoverse-track id="" name="Sequence" info="" label="true"
-         *      url-template="{{protocol}}//{{endpoint}}/overlap/region/{{species}}/{{chromosome}}:{{start}}-{{end}}?feature=gene;content-type=application/json"
-         *      url-variables="{protocol: 'https', endpoint: 'rest.ensembl.org'">
-         *     </genoverse-track>
-         * </genoverse>
          */
         return {
             restrict: 'E',
@@ -76,15 +68,8 @@
             },
             template:
                 "<div class='wrap genoverse-wrap'>" +
-                "    <p class='text-muted'>" +
-                "        <span id='genomic-location' class='margin-right-5px'></span>" +
-                "        View in <a href='http://{{domain}}/{{genome.species | urlencodeSpecies}}/Location/View?r={{chromosome}}:{{start}}-{{end}}' id='ensembl-link' target='_blank'>Ensembl</a>" +
-                "        <span ng-show='genome.assembly_ucsc' class='ucsc-link'>|" +
-                "            <a href='http://genome.ucsc.edu/cgi-bin/hgTracks?db={{genome.assembly_ucsc}}&position={{chromosome | chrToUCSC}}%3A{{start}}-{{end}}' target='_blank'>UCSC</a>" +
-                "        </span>" +
-                "    </p>" +
-                "<div id='genoverse'></div>" +
-                "<div id='for-tracks'></div>" +
+                "  <div id='genoverse'></div>" +
+                "  <div id='for-tracks'></div>" +
                 "</div>",
             transclude: true,
             controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
@@ -114,9 +99,6 @@
                         plugins: ['controlPanel', 'karyotype', 'resizer', 'fileDrop'],
                         tracks: tracks
                     };
-
-                    // get domain for Ensembl links
-                    $scope.domain = getEnsemblSubdomainByDivision($scope.genome);
 
                     // create Genoverse browser
                     $scope.browser = new Genoverse(genoverseConfig);
@@ -188,7 +170,6 @@
                 ctrl.setGenoverseToAngularWatches = function() {
                     var speciesWatch = $scope.$watch('browser.species', function(newValue, oldValue) {
                         $scope.genome = getGenomeByName(newValue);
-                        $scope.domain = getEnsemblSubdomainByDivision($scope.genome);
                     });
 
                     var chrWatch = $scope.$watch('browser.chr', function(newValue, oldValue) {
@@ -284,38 +265,6 @@
                     }
 
                     return null; // if no match found, return null
-                }
-
-                /**
-                 * Takes a genome on input, looks into its division attribute and returns the corresponding Ensembl
-                 * subdomain
-                 *
-                 * @param genome {Object} e.g.
-                 * {
-                 *     'species': 'Mus musculus', 'synonyms': ['mouse'], 'assembly': 'GRCm38', 'assembly_ucsc': 'mm10',
-                 *     'taxid': 10090, 'division': 'Ensembl',
-                 *     'example_location': {'chromosome': 1, 'start': 86351981, 'end': 86352127,}
-                 * }
-                 * @returns {String} domain name without protocol or slashes or trailing dots
-                 */
-                function getEnsemblSubdomainByDivision(genome) {
-                    var subdomain;
-
-                    if (genome.division == 'Ensembl') {
-                        subdomain = 'ensembl.org';
-                    } else if (genome.division == 'Ensembl Plants') {
-                        subdomain = 'plants.ensembl.org';
-                    } else if (genome.division == 'Ensembl Metazoa') {
-                        subdomain = 'metazoa.ensembl.org';
-                    } else if (genome.division == 'Ensembl Bacteria') {
-                        subdomain = 'bacteria.ensembl.org';
-                    } else if (genome.division == 'Ensembl Fungi') {
-                        subdomain = 'fungi.ensembl.org';
-                    } else if (genome.division == 'Ensembl Protists') {
-                        subdomain = 'protists.ensembl.org';
-                    }
-
-                    return subdomain;
                 }
             }],
             link: function(scope, $element, attrs, ctrl, transcludeFn) {
