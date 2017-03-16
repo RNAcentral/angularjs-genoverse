@@ -199,7 +199,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'species': 'Caenorhabditis elegans',
             'synonyms': ['worm'],
             'assembly': 'WBcel235',
-            'assembly_ucsc': '',
+            'assembly_ucsc': 'ce11',
             'taxid': 6239,
             'division': 'Ensembl Metazoa',
             'example_location': {

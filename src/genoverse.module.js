@@ -44,11 +44,7 @@
          * @returns {string} 'chr21', 'chrX', 'chrY' or 'D38368'
          */
         return function(input) {
-            if (input.toString().match(/^\d+$|^[XYM]$/)) {
-                return 'chr' + input.toString();
-            } else {
-                return input.toString();
-            }
+            return 'chr' + input.toString();
         }
     }
     chrToUCSC.$inject = [];
@@ -269,7 +265,8 @@
             }],
             link: function(scope, $element, attrs, ctrl, transcludeFn) {
                 // We are going to temporarily add child directive's template to $element
-                // so it can be linked to scope, but after it's linked, we detach it.
+                // so it can be linked to scope, but after it's linked, we detach it. Taken from:
+                // http://stackoverflow.com/questions/23345207/transcluded-content-requires-the-controller-of-the-transcluding-directive
                 transcludeFn(function(clone) {
                     $element.find('#for-tracks').append(clone);
                 }).detach(); // <- Immediately detach it
