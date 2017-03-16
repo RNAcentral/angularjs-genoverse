@@ -287,18 +287,18 @@
             require: "^genoverse",
             template: "",
             scope: {
-                'name':            '@',
-                'labels':          '@?',
-                'id':              '@?',
+                'name':            '=',
+                'labels':          '=?',
+                'id':              '=?',
                 'model':           '=',
                 'modelExtra':      '=?',
                 'url':             '=',
                 'view':            '=',
                 'viewExtra':       '=?',
-                'controller':      '=',
+                'controller':      '=?',
                 'controllerExtra': '=?',
-                'resizable':       '@?',
-                'autoHeight':      '@?',
+                'resizable':       '=?',
+                'autoHeight':      '=?',
                 'extra':           '=?'
             },
             link: function(scope, element, attrs, genoverseCtrl) {
@@ -306,10 +306,11 @@
                 var trackConfig = {};
 
                 trackConfig.name           = scope.name;
+                trackConfig.url            = scope.url;
                 trackConfig.model          = scope.model;
                 trackConfig.view           = scope.view;
-                trackConfig.controller     = scope.controller;
-                trackConfig.url            = scope.url;
+
+                if (scope.controller)      trackConfig.controller = scope.controller;
 
                 if (scope.labels)          trackConfig.labels = scope.labels;
                 if (scope.id)              trackConfig.id = scope.id;

@@ -18,9 +18,9 @@ Use this directive as a "web component" in your HTML:
 
 ```HTML
 <genoverse genome="genome" chromosome="chromosome" start="start" end="end">
-    <genoverse-track name="Sequence" model="Genoverse.Track.Model.Sequence.Ensembl" view="Genoverse.Track.View.Sequence" controller="Genoverse.Track.Controller.Sequence" url="urls.sequence" resizable="auto" autoHeight="{{true}}" extra="{100000: false}"></genoverse-track>
-    <genoverse-track name="Genes" info="Ensembl API genes" model="Genoverse.Track.Model.Gene.Ensembl" view="Genoverse.Track.View.Gene.Ensembl" controller="Genoverse.Track.Controller.Ensembl" url="urls.genes" resizable="auto" autoHeight="{{true}}"></genoverse-track>
-    <genoverse-track name="Transcripts" info="Ensembl API transcripts" model="Genoverse.Track.Model.Transcript.Ensembl" view="Genoverse.Track.View.Transcript.Ensembl" controller="Genoverse.Track.Controller.Ensembl" url="urls.transcripts" resizable="auto" autoHeight="{{true}}"></genoverse-track>
+    <genoverse-track name="'Sequence'" model="Genoverse.Track.Model.Sequence.Ensembl" view="Genoverse.Track.View.Sequence" controller="Genoverse.Track.Controller.Sequence" url="urls.sequence" resizable="'auto'" auto-height="true" extra="{100000: false}"></genoverse-track>
+    <genoverse-track name="'Genes'" labels="true" info="'Ensembl API genes'" model="Genoverse.Track.Model.Gene.Ensembl" view="Genoverse.Track.View.Gene.Ensembl" url="urls.genes" resizable="'auto'" auto-height="true"></genoverse-track>
+    <genoverse-track name="'Transcripts'" labels="true" info="'Ensembl API transcripts'" model="Genoverse.Track.Model.Transcript.Ensembl" view="Genoverse.Track.View.Transcript.Ensembl" url="urls.transcripts" resizable="'auto'" auto-height="true"></genoverse-track>
 </genoverse>
 ```
 
@@ -74,16 +74,22 @@ AngularJS-Genoverse depends on `angular.js` and `jquery`. Don't forget to includ
 Configuration
 =============
 
-We have 2 directives in this package: genoverse and genoverse-track. Here is the full description of their attributes
-that you can use to configure them.
+We have 2 directives in this package: <genoverse> and <genoverse-track>.
+
+Here is the full description of their attributes that you can use to configure them. Note that all attributes are
+ interpolated, i.e. use 2-way data-binding. So if you try passing an attribute as `<genoverse attr="val">`, angular
+ will look for variable, called "val", not a string "val". If you want just to pass a literal, use another pair of
+ quotes like: `<genoverse attr="'literal'"`.
 
 genoverse
 ---------
 
+Global configuration of the browser. To specify available tracks, use nested <genoverse-track> attributes.
+
 Attribute  | Type   | Required | Description
 ---------- | ------ | -------- | -----------
 genome     | Object | true     | {<br>   'species': 'Homo sapiens',<br>   'synonyms': ['human'],<br>   'assembly': 'GRCh38',<br>   'assembly_ucsc': 'hg38',<br>   'taxid': 9606,<br>   'division': 'Ensembl',<br>   'example_location': {<br>     'chromosome': 'X',<br>     'start': 73792205,<br>     'end': 73829231<br> }
-chromosome | String | true     | Ensembl-style chromosome name, e.g. 'X'
+chromosome | String | true     | Ensembl-style chromosome name, e.g. 'X' or '1' or '3R' or 'III'
 start      | Number | true     | Current genome location, where viewport starts
 end        | Number | true     | Current genome location, where viewport ends
 
@@ -91,19 +97,22 @@ end        | Number | true     | Current genome location, where viewport ends
 genoverseTrack
 --------------
 
-Attribute       | Type               | Required | Default | Description
---------------- | ------------------ | -------- | ------- | -----------
-name            | String             | true     |         | Track id
-labels          | Boolean            | false    | true    | Display labels
-id              | String             | false    |         |
-model           | Object             | true     |         | `Genoverse.Track.Model` subclass
-modelExtra      | Object             | false    |         | Extra parameters to extend your model with: `model.extend(modelExtra)`
-url             | String OR Function | true     |         | String template or function that returns string template that track uses to download features data to display.<br><br> E.g. 'https://rest.ensemblgenomes.org/sequence/region/homo_sapiens/__CHR__:__START__-__END__?content-type=text/plain'.<br><br>Note that it uses `__CHR__`, `__START__` and `__END__` variables, but doesn't support a variable for species/genome.
-view            | Object             | true     |         | `Genoverse.Track.View` subclass
-viewExtra       | Object             | false    |         | Extra parameters to extend your view with: `view.extend(viewExtra)`
-controller      | Object             | true     |         | `Genoverse.Track.Controller` subclass
-controllerExtra | Object             | false    |         | Extra parameters to extend your controller with: `controller.extend(controllerExtra)`
-resizable       | String             | false    | 'auto'  | Allow user to resize tracks by dragging a handle?
-autoHeight      | Boolean            | false    | false   | Automatically resize tracks upon load to take as much space as is required to display all features
-extra           | Object             | false    |         | Extra parameters to extend your track's configuration, e.g. `track.extend(extra)`
+Configuration of a single track. Note that you don't have to create Scalebar track - it's present by default.
+
+
+Attribute        | Type               | Required | Default | Description
+---------------- | ------------------ | -------- | ------- | -----------
+name             | String             | true     |         | Track id
+labels           | Boolean            | false    | true    | Display labels
+id               | String             | false    |         |
+model            | Object             | true     |         | `Genoverse.Track.Model` subclass
+model-extra      | Object             | false    |         | Extra parameters to extend your model with: `model.extend(modelExtra)`
+url              | String OR Function | true     |         | String template or function that returns string template that track uses to download features data to display.<br><br> E.g. 'https://rest.ensemblgenomes.org/sequence/region/homo_sapiens/__CHR__:__START__-__END__?content-type=text/plain'.<br><br>Note that it uses `__CHR__`, `__START__` and `__END__` variables, but doesn't support a variable for species/genome.
+view             | Object             | true     |         | `Genoverse.Track.View` subclass
+view-extra       | Object             | false    |         | Extra parameters to extend your view with: `view.extend(viewExtra)`
+controller       | Object             | false    |         | `Genoverse.Track.Controller` subclass
+controller-extra | Object             | false    |         | Extra parameters to extend your controller with: `controller.extend(controllerExtra)`
+resizable        | String             | false    | 'auto'  | Allow user to resize tracks by dragging a handle?
+auto-height      | Boolean            | false    | false   | Automatically resize tracks upon load to take as much space as is required to display all features
+extra            | Object             | false    |         | Extra parameters to extend your track's configuration, e.g. `track.extend(extra)`
 
