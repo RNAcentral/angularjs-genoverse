@@ -74,17 +74,18 @@ AngularJS-Genoverse depends on `angular.js` and `jquery`. Don't forget to includ
 Configuration
 =============
 
-We have 2 directives in this package: <genoverse> and <genoverse-track>.
+We have 2 directives in this package: `<genoverse>` and `<genoverse-track>`.
 
-Here is the full description of their attributes that you can use to configure them. Note that all attributes are
- interpolated, i.e. use 2-way data-binding. So if you try passing an attribute as `<genoverse attr="val">`, angular
- will look for variable, called "val", not a string "val". If you want just to pass a literal, use another pair of
- quotes like: `<genoverse attr="'literal'"`.
+Below is the full description of their attributes that you can use to configure them.
+
+Note that all attributes are interpolated, i.e. use 2-way data-binding. So if you try passing an attribute as
+`<genoverse attr="val">`, angular will look for variable, called "val", not a string "val". If you want just to pass
+a literal, use another pair of quotes like: `<genoverse attr="'literal'"`.
 
 genoverse
 ---------
 
-Global configuration of the browser. To specify available tracks, use nested <genoverse-track> attributes.
+Global configuration of the browser. To specify tracks, use nested `<genoverse-track>` tags within `genoverse`.
 
 Attribute  | Type   | Required | Description
 ---------- | ------ | -------- | -----------
