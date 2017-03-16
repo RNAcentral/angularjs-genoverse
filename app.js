@@ -501,8 +501,12 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
      */
     function setUrl(newValue, oldValue) {
         // set the full url
-        $location.path("/" + $filter('urlencodeSpecies')($scope.genome.species)); // this filter's from Genoverse module
-        $location.search({chromosome: $scope.chromosome, start: $scope.start, end: $scope.end});
+        $location.search({
+            species: $filter('urlencodeSpecies')($scope.genome.species),  // filter is from Genoverse module
+            chromosome: $scope.chromosome,
+            start: $scope.start,
+            end: $scope.end
+        });
         $location.replace();
     }
 
