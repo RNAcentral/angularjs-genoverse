@@ -3,6 +3,7 @@ AngularJS - Genoverse
 
 [![Build Status](https://travis-ci.org/RNAcentral/angularjs-genoverse.svg?branch=master)](https://travis-ci.org/RNAcentral/angularjs-genoverse)
 [![npm version](https://badge.fury.io/js/angularjs-genoverse.svg)](https://badge.fury.io/js/angularjs-genoverse)
+[![Bower version](https://badge.fury.io/bo/angularjs-genoverse.svg)](https://badge.fury.io/bo/angularjs-genoverse)
 
 An AngularJS (1.x) directive, wrapping the [Genoverse genome browser](https://github.com/wtsi-web/Genoverse) version 3.
 
