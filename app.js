@@ -33,8 +33,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl',
             'example_location': {
                 'chromosome': 'X',
-                'start': 73792205,
-                'end': 73829231
+                'start': 73819307,
+                'end': 73856333
             }
         },
         {
@@ -46,8 +46,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl',
             'example_location': {
                 'chromosome': 1,
-                'start': 86351981,
-                'end': 86352127
+                'start': 86351908,
+                'end': 86352200
             }
         },
         {
@@ -59,8 +59,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl',
             'example_location': {
                 'chromosome': 9,
-                'start': 7633985,
-                'end': 7634135
+                'start': 7633910,
+                'end': 7634210
             }
         },
         {
@@ -72,8 +72,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl',
             'example_location': {
                 'chromosome': 15,
-                'start': 82197714,
-                'end': 82197796
+                'start': 82197673,
+                'end': 82197837
             }
         },
         {
@@ -85,8 +85,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl',
             'example_location': {
                 'chromosome': 'X',
-                'start': 118277684,
-                'end': 118277795
+                'start': 118277628,
+                'end': 118277850
             }
         },
         // {
@@ -124,8 +124,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl',
             'example_location': {
                 'chromosome': 11,
-                'start': 78369057,
-                'end': 78369163
+                'start': 78369004,
+                'end': 78369219
             }
         },
         {
@@ -137,8 +137,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl',
             'example_location': {
                 'chromosome': 19,
-                'start': 22006963,
-                'end': 22007066
+                'start': 22006909,
+                'end': 22007119
             }
         },
         // {
@@ -190,8 +190,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl Fungi',
             'example_location': {
                 'chromosome': 'I',
-                'start': 541795,
-                'end': 543483
+                'start': 540951,
+                'end': 544327
             }
         },
         // Ensembl Metazoa
@@ -204,8 +204,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl Metazoa',
             'example_location': {
                 'chromosome': 'III',
-                'start': 11467449,
-                'end': 11467620
+                'start': 11467363,
+                'end': 11467705
             }
         },
         {
@@ -217,8 +217,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl Metazoa',
             'example_location': {
                 'chromosome': '3R',
-                'start': 7474553,
-                'end': 7474996
+                'start': 7474331,
+                'end': 7475217
             }
         },
         {
@@ -230,8 +230,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl Metazoa',
             'example_location': {
                 'chromosome': 'scaf16',
-                'start': 6180119,
-                'end': 6180321
+                'start': 6180018,
+                'end': 6180422
             }
         },
         // {
@@ -257,8 +257,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl Protists',
             'example_location': {
                 'chromosome': 2,
-                'start': 7876933,
-                'end': 7877055
+                'start': 7874546,
+                'end': 7876498
             }
         },
         // {
@@ -284,8 +284,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             'division': 'Ensembl Plants',
             'example_location': {
                 'chromosome': 2,
-                'start': 18820691,
-                'end': 18822184
+                'start': 18819643,
+                'end': 18822629
             }
         }
     ];
@@ -388,8 +388,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
     $scope.genome = genomes[0];
 
     $scope.chromosome = "X";
-    $scope.start = 73792205;
-    $scope.end = 73829231;
+    $scope.start = 73819307;
+    $scope.end = 73856333;
 
     $scope.Genoverse = Genoverse;
 
