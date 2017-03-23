@@ -56,11 +56,30 @@
         return {
             restrict: 'E',
             scope: {
-                genome: '=',
-                chromosome: '=',
-                start: '=',
-                end: '=',
-                tracks: '='
+                // TODO in 2.0.0: assembly:         '=',
+                genome:           '=',
+                chromosome:       '=', // TODO in 2.0.0: rename to chr
+                // TODO in 2.0.0: chromosomeSize:   '=',
+                start:            '=',
+                end:              '=',
+
+                highlights:       '=?',
+                plugins:          '=?',
+
+                urlParamTemplate: '=?',
+                useHash:          '=?',
+
+                dragAction:       '=?',
+                wheelAction:      '=?',
+                isStatic:         '=?',
+
+                saveable:         '=?',
+                storageType:      '=?',
+                saveKey:          '=?',
+
+                autoHideMessages: '=?',
+                trackAutoHeight:  '=?',
+                hideEmptyTracks:  '=?'
             },
             template:
                 "<div class='wrap genoverse-wrap'>" +
@@ -78,26 +97,7 @@
                 // Methods
                 // -------
                 ctrl.render = function() {
-                    // generate (updated) Genoverse config
-
-                    var tracks = [ Genoverse.Track.Scalebar ];
-                    ctrl.trackConfigs.forEach(function(trackConfig) {
-                        tracks.push(ctrl.parseTrackConfig(trackConfig));
-                    });
-
-                    var genoverseConfig = {
-                        container: $element.find('#genoverse'),
-                        width: $('.container').width(),
-                        // if we want Genoverse itself to update url on scroll, say:
-                        urlParamTemplate: false, // or set to: "chromosome=__CHR__&start=__START__&end=__END__",
-                        chr: $scope.chromosome,
-                        start: $scope.start,
-                        end: $scope.end,
-                        species: $scope.genome.species,
-                        genome: $filter('urlencodeSpecies')($scope.genome.species),
-                        plugins: ['controlPanel', 'karyotype', 'resizer', 'fileDrop'],
-                        tracks: tracks
-                    };
+                    var genoverseConfig = ctrl.parseConfig();
 
                     // create Genoverse browser
                     $scope.browser = new Genoverse(genoverseConfig);
@@ -121,6 +121,66 @@
                             $timeout(angular.noop);
                         }
                     });
+                };
+
+
+                /**
+                 * Parses $scope variables and applies defaults, where necessary, constructing genoverseConfig
+                 * @returns {Object} - config, suitable for calling new Genoverse(genoverseConfig);
+                 */
+                ctrl.parseConfig = function() {
+
+                    // Required + hard-coded
+                    // ---------------------
+
+                    var genoverseConfig = {
+                        container: $element.find('#genoverse'),
+                        width: $('.container').width(),
+
+                        chr: $scope.chromosome,
+                        start: $scope.start,
+                        end: $scope.end,
+                        species: $scope.genome.species, // TODO: may be we don't need this?
+                        genome: $filter('urlencodeSpecies')($scope.genome.species),
+                    };
+
+                    // What is displayed
+                    // -----------------
+
+                    var tracks = [ Genoverse.Track.Scalebar ];
+                    ctrl.trackConfigs.forEach(function(trackConfig) {
+                        tracks.push(ctrl.parseTrackConfig(trackConfig));
+                    });
+                    genoverseConfig.tracks = tracks;
+
+                    if ($scope.highlights !== undefined)       genoverseConfig.highlights = $scope.highlights;
+                    genoverseConfig.plugins = $scope.plugins !== undefined ? $scope.plugins : ['controlPanel', 'karyotype', 'resizer', 'fileDrop'];
+
+                    // Interaction with URL
+                    // --------------------
+
+                    genoverseConfig.urlParamTemplate = $scope.urlParamTemplate !== undefined ? $scope.urlParamTemplate : false;
+                    if ($scope.useHash !== undefined)          genoverseConfig.useHash = $scope.useHash;
+
+                    // User actions
+                    // ------------
+                    if ($scope.dragAction !== undefined)       genoverseConfig.dragAction = $scope.dragAction;
+                    if ($scope.wheelAction !== undefined)      genoverseConfig.wheelAction = $scope.wheelAction;
+                    if ($scope.isStatic !== undefined)         genoverseConfig.isStatic = $scope.isStatic;
+
+                    // Saving user configuration
+                    // -------------------------
+                    if ($scope.saveable !== undefined)         genoverseConfig.saveable = $scope.saveable;
+                    if ($scope.storageType !== undefined)      genoverseConfig.storageType = $scope.storageType;
+                    if ($scope.saveKey !== undefined)          genoverseConfig.saveKey = $scope.saveKey;
+
+                    // Default track display settings
+                    // ------------------------------
+                    if ($scope.autoHideMessages !== undefined) genoverseConfig.autoHideMessages = $scope.autoHideMessages;
+                    if ($scope.trackAutoHeight !== undefined)  genoverseConfig.trackAutoHeight = $scope.trackAutoHeight;
+                    if ($scope.hideEmptyTracks !== undefined)  genoverseConfig.hideEmptyTracks = $scope.hideEmptyTracks;
+
+                    return genoverseConfig;
                 };
 
                 /**
@@ -256,6 +316,7 @@
                  * Makes browser "responsive" - if container changes width, so does the browser.
                  */
                 ctrl.setGenoverseWidth = function() {
+                    //TODO: make this independent on layout
                     var w = $('.container').width();
                     $scope.browser.setWidth(w);
 
@@ -357,7 +418,7 @@
 
                 'clickTolerance':   '=?',
 
-                'id':               '=?',
+                'id':               '=?' // TODO: remove this in 2.0.0
             },
             link: function(scope, element, attrs, genoverseCtrl) {
                 var trackConfig = {};

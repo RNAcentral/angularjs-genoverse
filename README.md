@@ -89,12 +89,25 @@ Global configuration of the browser. To specify tracks, use nested `<genoverse-t
 
 For more details, see: https://github.com/simonbrent/Genoverse/blob/master/docs/configuration.md
 
-Attribute  | Type   | Required | Description
----------- | ------ | -------- | -----------
-genome     | Object | true     | {<br>   'species': 'Homo sapiens',<br>   'synonyms': ['human'],<br>   'assembly': 'GRCh38',<br>   'assembly_ucsc': 'hg38',<br>   'taxid': 9606,<br>   'division': 'Ensembl',<br>   'example_location': {<br>     'chromosome': 'X',<br>     'start': 73792205,<br>     'end': 73829231<br> }
-chromosome | String | true     | Ensembl-style chromosome name, e.g. 'X' or '1' or '3R' or 'III'
-start      | Number | true     | Current genome location, where viewport starts
-end        | Number | true     | Current genome location, where viewport ends
+Attribute          | Type               | Required | Default                                              | Description
+------------------ | ------------------ | -------- | ---------------------------------------------------- | -----------
+genome             | Object             | true     |                                                      | {<br>   'species': 'Homo sapiens',<br>   'synonyms': ['human'],<br>   'assembly': 'GRCh38',<br>   'assembly_ucsc': 'hg38',<br>   'taxid': 9606,<br>   'division': 'Ensembl',<br>   'example_location': {<br>     'chromosome': 'X',<br>     'start': 73792205,<br>     'end': 73829231<br> }
+chromosome         | String             | true     |                                                      | Ensembl-style chromosome name, e.g. 'X' or '1' or '3R' or 'III'
+start              | Number             | true     |                                                      | Current genome location, where viewport starts
+end                | Number             | true     |                                                      | Current genome location, where viewport ends
+highlights         | Array              | false    | []                                                   | Array of regions to highlight, in the form `{ "start": 100, "end", 200, "label": "My highlight", "removable": false }`
+plugins            | Array              | false    | ['controlPanel', 'karyotype', 'resizer', 'fileDrop'] | Array of plugins to use (chosen from `Genoverse/js/plugins`) ! Default different from original Genoverse
+url-param-template | String/Boolean     | false    | false                                                | Replace url upon browser drags with this template interpolation  ! Default different from original Genoverse
+useHash            | Boolean/undefined  | false    | undefined                                            | How URL is updated upon navigation (options: `true`=`window.location.hash`, `false`=`window.history.pushState`, `undefined`=HTML5history if available or fallback to hash, if not)
+drag-action        | String             | false    | "scroll"                                             | Action performed on mouse drag (options: `"scroll"`, `"select"`, `"off"`)
+wheel-action       | String             | false    | "off"                                                | Action performed on wheel spin (options: `"zoom"`, `"off"`)
+is-static          | Boolean            | false    | false                                                | If `true`, will stop drag, select and zoom actions occuring
+saveable           | Boolean            | false    | false                                                | If true, track configuration and ordering will be saved in `sessionStorage/localStorage`
+storage-type       | String             | false    | "sessionStorage"                                     | Storage to use to save track configuration (options: `"sessionStorage"`, `"localStorage"`)
+save-key           | String             | false    | undefined                                            | Default key, used in configuration storage is "genoverse". `saveKey` will be appended to it, if defined
+auto-hide-messages | Boolean            | false    | true                                                 | Determines, whether to collapse popups with messages on tracks by default
+track-auto-height  | Boolean/undefined  | false    | true                                                 | Determines, whether to auto-resize tracks to show all feauteres (can be overridden per-track by track's `auto-height`)
+hide-empty-tracks  | Boolean/undefined  | false    | true                                                 | Determines, whether to auto-hide tracks with no features in viewport (can be overridden per-track with track's `hide-empty`)
 
 
 genoverseTrack
@@ -117,8 +130,8 @@ extra              | Object             | false    |                            
 name               | String             | true     |                                          | Track name
 height             | Number             | false    | 12                                       | Initial height of track in pixels
 resizable          | Boolean/String     | false    | true                                     | If track's able to change height (options: `true`, `false`, `"auto"`)
-auto-height        | Boolean/Undefined  | false    | browser.trackAutoHeight                  | If track automatically resizes to keep features visible (options: `true`, `false`, `undefined` for default)
-hide-empty         | Boolean/Undefined  | false    | browser.hideEmptyTracks                  | If track is hidden if there are no features to display in viewport (options: `true`, `false`, `undefined` for default)
+auto-height        | Boolean/undefined  | false    | browser.trackAutoHeight                  | If track automatically resizes to keep features visible (options: `true`, `false`, `undefined` for default)
+hide-empty         | Boolean/undefined  | false    | browser.hideEmptyTracks                  | If track is hidden if there are no features to display in viewport (options: `true`, `false`, `undefined` for default)
 margin             | Number             | false    | 2                                        | Space in pixels below the track and next track
 border             | Boolean            | false    | true                                     | If true, track has a border under it
 unsortable         | Boolean            | false    | false                                    | If true, track re-ordering can't touch this track
@@ -127,20 +140,20 @@ url-params         | Object             | false    | undefined                  
 data               |                    | false    | undefined                                | Instead of loading feautures with AJAX, pass them pre-defined.
 all-data           | Boolean            | false    | false                                    | If all data are loaded in a single request and consequent AJAX calls are not required upon scrolling.
 data-request-limit | Number             | false    | undefined                                |
-dataType           | String             | false    | undefined                                | dataType setting to be used in the jQuery.ajax for getting data ! Different from original Genoverse: default undefined, not "json"
-xhrFields          | PlainObject        | false    | undefined                                | xhrFieds setting to be used in the jQuery.ajax for getting data
-featureHeight      | Number             | false    | track.height                             | Height of each feature
-featureMargin      | Object             | false    | { top: 3, right: 1, bottom: 1, left: 0 } | Space in pixels around each feature, when positioning on canvas and for bumping
+data-type          | String             | false    | undefined                                | dataType setting to be used in the jQuery.ajax for getting data ! Different from original Genoverse: default undefined, not "json"
+xhr-fields         | PlainObject        | false    | undefined                                | xhrFieds setting to be used in the jQuery.ajax for getting data
+feature-height     | Number             | false    | track.height                             | Height of each feature
+feature-margin     | Object             | false    | { top: 3, right: 1, bottom: 1, left: 0 } | Space in pixels around each feature, when positioning on canvas and for bumping
 color              | String             | false    | "#000000"                                | Color of each feature
-fontColor          | String             | false    | feature.color (if any) or track.color    | Default color for feature labels
-fontWeight         | String/Number      | false    | "normal"                                 | Font weight
-fontHeight         | Number             | false    | 10                                       | Font height
-fontFamily         | String             | false    | "sans-serif"                             | Font family
+font-color         | String             | false    | feature.color (if any) or track.color    | Default color for feature labels
+font-weight        | String/Number      | false    | "normal"                                 | Font weight
+font-height        | Number             | false    | 10                                       | Font height
+font-family        | String             | false    | "sans-serif"                             | Font family
 labels             | Boolean/String     | false    | true                                     | Determines, how labels are drawn (options: `true`, `"overlay"`, `"separate"` or `false`)
-repeatLabels       | Boolean            | false    | false                                    | If true, label is repeated along the length of feature
+repeat-labels      | Boolean            | false    | false                                    | If true, label is repeated along the length of feature
 bump               | Boolean/String     | false    | false                                    | If features are moved vertically within the track so that they don't overlap (options: `true`, `false`, `"labels"`)
 depth              | Number             | false    | undefined                                | Maximum bumping depth for features in track, if required depth for a features is greater, it's not drawn
 threshold          | Number             | false    | Infinity                                 | If threshold is exceeded, features on track are not drawn
-clickTolerance     | Number             | false    | 0                                        | By how many pixels at most you can drag the mouse, so that it's still considered a click (showing a popup), not a drag.
+click-tolerance    | Number             | false    | 0                                        | By how many pixels at most you can drag the mouse, so that it's still considered a click (showing a popup), not a drag.
 id                 | String             | false    |                                          |
 
