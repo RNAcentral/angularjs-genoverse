@@ -59,7 +59,7 @@
                 // TODO in 2.0.0: assembly:         '=',
                 genome:           '=',
                 chromosome:       '=', // TODO in 2.0.0: rename to chr
-                // TODO in 2.0.0: chromosomeSize:   '=',
+                chromosomeSize:   '=?',
                 start:            '=',
                 end:              '=',
 
@@ -263,7 +263,11 @@
                         $scope.end = newValue;
                     });
 
-                    return [speciesWatch, chrWatch, startWatch, endWatch];
+                    var chromosomeSizeWatch = $scope.$watch('browser.chromosomeSize', function(newValue, oldValue) {
+                        $scope.chromosomeSize = newValue;
+                    });
+
+                    return [speciesWatch, chrWatch, startWatch, endWatch, chromosomeSizeWatch];
                 };
 
                 /**
