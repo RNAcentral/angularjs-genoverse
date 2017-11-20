@@ -9,6 +9,7 @@
          * @returns {string} - scientific name of species with whitespaces replaces with underscores
          */
         return function(input) {
+            debugger;
             // Canis familiaris is a special case
             if (input == 'Canis familiaris') {
                 input = 'Canis lupus familiaris';
@@ -49,6 +50,42 @@
     }
     chrToUCSC.$inject = [];
 
+    function getGenomeObjectByName() {
+        /**
+         * Returns an object from $scope.genomes Array by its species name or null, if not found.
+         *
+         * @param name {string} e.g. "Homo sapiens" or "homo_sapiens" (like in url) or "human" (synonym)
+         * @param genomes {Array} e.g. [{'species': 'Homo sapiens', 'synonyms': ['human'], 'assembly': 'GRCh38', 'assembly_ucsc': 'hg38', 'taxid': 9606, 'division': 'Ensembl', 'example_location': {'chromosome': 'X','start': 73792205,'end': 73829231}]
+         * @returns {Object || null} element of genomes Array
+         */
+        return function(name, genomes) {
+            name = name.replace(/_/g, ' '); // if name was urlencoded, replace '_' with whitespaces
+
+            for (var i = 0; i < genomes.length; i++) {
+                if (name.toLowerCase() == genomes[i].species.toLowerCase()) { // test scientific name
+                    console.log("genome = ", genomes[i])
+                    return genomes[i];
+                }
+                else { // if name is not a scientific name, may be it's a synonym?
+                    var synonyms = []; // convert all synonyms to lower case to make case-insensitive comparison
+
+                    genomes[i].synonyms.forEach(function(synonym) {
+                        synonyms.push(synonym.toLowerCase());
+                    });
+
+                    if (synonyms.indexOf(name.toLowerCase()) > -1) {
+                      console.log("genome = ", genomes[i]);
+                      return genomes[i];
+                    }
+                }
+            }
+
+            return null; // if no match found, return null
+        }
+    }
+    getGenomeObjectByName.$inject = [];
+
+
     function genoverse($filter, $timeout) {
         /**
          * Returns the directive definition object for genoverse directive.
@@ -58,10 +95,11 @@
             scope: {
                 // TODO in 2.0.0: assembly:         '=',
                 genome:           '=',
-                chromosome:       '=', // TODO in 2.0.0: rename to chr
+                chr:              '=',
                 chromosomeSize:   '=?',
                 start:            '=',
                 end:              '=',
+                genomes:          '=?', // this is our addition, not in original genome-browser
 
                 highlights:       '=?',
                 plugins:          '=?',
@@ -137,11 +175,10 @@
                         container: $element.find('#genoverse'),
                         width: $('.container').width(),
 
-                        chr: $scope.chromosome,
+                        chr: $scope.chr,
                         start: $scope.start,
                         end: $scope.end,
-                        species: $scope.genome.species, // TODO: may be we don't need this?
-                        genome: $filter('urlencodeSpecies')($scope.genome.species),
+                        genome: $filter('urlencodeSpecies')($scope.genome),
                     };
 
                     // What is displayed
@@ -248,11 +285,11 @@
                  */
                 ctrl.setGenoverseToAngularWatches = function() {
                     var speciesWatch = $scope.$watch('browser.species', function(newValue, oldValue) {
-                        $scope.genome = getGenomeByName(newValue);
+                        $scope.genome = newValue;
                     });
 
                     var chrWatch = $scope.$watch('browser.chr', function(newValue, oldValue) {
-                        $scope.chromosome = newValue;
+                        $scope.chr = newValue;
                     });
 
                     var startWatch = $scope.$watch('browser.start', function(newValue, oldValue) {
@@ -279,17 +316,17 @@
                 ctrl.setAngularToGenoverseWatches = function() {
                     var startWatch = $scope.$watch('start', function(newValue, oldValue) {
                         if (!angular.equals(newValue, oldValue)) {
-                            $scope.browser.moveTo($scope.chromosome, newValue, $scope.end, true);
+                            $scope.browser.moveTo($scope.chr, newValue, $scope.end, true);
                         }
                     });
 
                     var endWatch = $scope.$watch('end', function(newValue, oldValue) {
                         if (!angular.equals(newValue, oldValue)) {
-                            $scope.browser.moveTo($scope.chromosome, $scope.start, newValue, true);
+                            $scope.browser.moveTo($scope.chr, $scope.start, newValue, true);
                         }
                     });
 
-                    var chrWatch = $scope.$watch('chromosome', function(newValue, oldValue) {
+                    var chrWatch = $scope.$watch('chr', function(newValue, oldValue) {
                         if (!angular.equals(newValue, oldValue)) {
                             $scope.browser.moveTo(newValue, $scope.start, $scope.end, true);
                         }
@@ -297,19 +334,28 @@
 
                     var speciesWatch = $scope.$watch('genome', function(newValue, oldValue) {
                         if (!angular.equals(newValue, oldValue)) {
-                            // destroy the old instance of browser and watches
-                            $scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
-                            $scope.angularToGenoverseWatches.forEach(function (element) { element(); }); // clear old watches
-                            $scope.browser.destroy(); // destroy genoverse and all callbacks and ajax requests
-                            delete $scope.browser; // clear old instance of browser
+                            if (!Genoverse.Genomes.hasOwnAttribute(newValue)) {
+                                alert("Genome '" + newValue + "' not found");
+                            } else {
+                                // destroy the old instance of browser and watches
+                                $scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
+                                $scope.angularToGenoverseWatches.forEach(function (element) { element(); }); // clear old watches
+                                $scope.browser.destroy(); // destroy genoverse and all callbacks and ajax requests
+                                delete $scope.browser; // clear old instance of browser
 
-                            // set the default location for the browser
-                            $scope.chromosome = newValue.example_location.chromosome;
-                            $scope.start = newValue.example_location.start;
-                            $scope.end = newValue.example_location.end;
+                                // set the default location for the browser
+                                if (!$scope.genomes || !$filter("getGenomeObjectByName")(newValue, $scope.genomes)) {
+                                    alert("Example location for genome '" + newValue + "' not specified");
+                                } else {
+                                    var genomeObject = $filter("getGenomeObjectByName")(newValue, $scope.genomes);
+                                    $scope.chr = genomeObject.example_location.chr;
+                                    $scope.start = genomeObject.example_location.start;
+                                    $scope.end = genomeObject.example_location.end;
+                                }
 
-                            // create a new instance of browser and set the new watches for it
-                            ctrl.render();
+                                // create a new instance of browser and set the new watches for it
+                                ctrl.render();
+                            }
                         }
                     });
 
@@ -327,36 +373,6 @@
                     // resize might change viewport location - digest these changes
                     $timeout(angular.noop)
                 };
-
-                // Helper functions
-                // ----------------
-
-                /**
-                 * Returns an object from genomes Array by its species name or null, if not found.
-                 *
-                 * @param name {string} e.g. "Homo sapiens" or "homo_sapiens" (like in url) or "human" (synonym)
-                 * @returns {Object || null} element of genomes Array
-                 */
-                function getGenomeByName(name) {
-                    name = name.replace(/_/g, ' '); // if name was urlencoded, replace '_' with whitespaces
-
-                    for (var i = 0; i < genomes.length; i++) {
-                        if (name.toLowerCase() == genomes[i].species.toLowerCase()) { // test scientific name
-                            return genomes[i];
-                        }
-                        else { // if name is not a scientific name, may be it's a synonym?
-                            var synonyms = []; // convert all synonyms to lower case to make case-insensitive comparison
-
-                            genomes[i].synonyms.forEach(function(synonym) {
-                                synonyms.push(synonym.toLowerCase());
-                            });
-
-                            if (synonyms.indexOf(name.toLowerCase()) > -1) return genomes[i];
-                        }
-                    }
-
-                    return null; // if no match found, return null
-                }
             }],
             link: function(scope, $element, attrs, ctrl, transcludeFn) {
                 // We are going to temporarily add child directive's template to $element
@@ -496,6 +512,7 @@
         .filter("urlencodeSpecies", urlencodeSpecies)
         .filter("urldecodeSpecies", urldecodeSpecies)
         .filter("chrToUCSC", chrToUCSC)
+        .filter("getGenomeObjectByName", getGenomeObjectByName)
         .directive("genoverse", genoverse)
         .directive("genoverseTrack", genoverseTrack);
 })();

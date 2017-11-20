@@ -22,7 +22,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
     // Constructor
     // -----------
 
-    $scope.genomes = genomes = [
+    $scope.genomes = [
         // Ensembl
         {
             'species': 'Homo sapiens',
@@ -387,28 +387,31 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
      * Takes a genome on input, looks into its division attribute and returns the corresponding Ensembl
      * subdomain
      *
-     * @param genome {Object} e.g.
-     * {
+     * @param genome {String}
+     * @param genomes {Array} e.g.
+     * [{
      *     'species': 'Mus musculus', 'synonyms': ['mouse'], 'assembly': 'GRCm38', 'assembly_ucsc': 'mm10',
      *     'taxid': 10090, 'division': 'Ensembl',
      *     'example_location': {'chromosome': 1, 'start': 86351981, 'end': 86352127,}
-     * }
+     * }, ...]
      * @returns {String} domain name without protocol or slashes or trailing dots
      */
-    function getEnsemblSubdomainByDivision(genome) {
+    function getEnsemblSubdomainByDivision(genome, genomes) {
         var subdomain;
 
-        if (genome.division == 'Ensembl') {
+        var genomeObject = $filter("getGenomeObjectByName")(genome, genomes);
+
+        if (genomeObject.division == 'Ensembl') {
             subdomain = 'ensembl.org';
-        } else if (genome.division == 'Ensembl Plants') {
+        } else if (genomeObject.division == 'Ensembl Plants') {
             subdomain = 'plants.ensembl.org';
-        } else if (genome.division == 'Ensembl Metazoa') {
+        } else if (genomeObject.division == 'Ensembl Metazoa') {
             subdomain = 'metazoa.ensembl.org';
-        } else if (genome.division == 'Ensembl Bacteria') {
+        } else if (genomeObject.division == 'Ensembl Bacteria') {
             subdomain = 'bacteria.ensembl.org';
-        } else if (genome.division == 'Ensembl Fungi') {
+        } else if (genomeObject.division == 'Ensembl Fungi') {
             subdomain = 'fungi.ensembl.org';
-        } else if (genome.division == 'Ensembl Protists') {
+        } else if (genomeObject.division == 'Ensembl Protists') {
             subdomain = 'protists.ensembl.org';
         }
 
@@ -417,10 +420,10 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
 
 
     // from JS standpoint, genome and genomes[i] == genome are different objects, but we want exactly the same, so:
-    $scope.genome = genomes[0];
+    $scope.genome = $scope.genomes[0].species;
 
     // get domain for Ensembl links
-    $scope.domain = getEnsemblSubdomainByDivision($scope.genome);
+    $scope.domain = getEnsemblSubdomainByDivision($scope.genome, $scope.genomes);
 
     $scope.chromosome = "X";
     $scope.start = 73819307;
@@ -430,21 +433,21 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
 
     $scope.urls = {
         sequence: function () { // Sequence track configuration
-            var species = $filter('urlencodeSpecies')($scope.genome.species);
+            var species = $filter('urlencodeSpecies')($scope.genome);
             var endpoint = getEndpoint(species);
             return '__ENDPOINT__/sequence/region/__SPECIES__/__CHR__:__START__-__END__?content-type=text/plain'
                 .replace('__ENDPOINT__', endpoint)
                 .replace('__SPECIES__', species);
         },
         genes: function() { // Genes track configuration
-            var species = $filter('urlencodeSpecies')($scope.genome.species);
+            var species = $filter('urlencodeSpecies')($scope.genome);
             var endpoint = getEndpoint(species);
             return '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=gene;content-type=application/json'
                 .replace('__ENDPOINT__', endpoint)
                 .replace('__SPECIES__', species);
         },
         transcripts: function() { // Transcripts track configuration
-            var species = $filter('urlencodeSpecies')($scope.genome.species);
+            var species = $filter('urlencodeSpecies')($scope.genome);
             var endpoint = getEndpoint(species);
             return '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'
                 .replace('__ENDPOINT__', endpoint)
@@ -502,7 +505,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
     function setUrl(newValue, oldValue) {
         // set the full url
         $location.search({
-            species: $filter('urlencodeSpecies')($scope.genome.species),  // filter is from Genoverse module
+            species: $filter('urlencodeSpecies')($scope.genome),  // filter is from Genoverse module
             chromosome: $scope.chromosome,
             start: $scope.start,
             end: $scope.end
@@ -511,7 +514,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
     }
 
     function setDomain(newValue, oldValue) {
-        $scope.domain = getEnsemblSubdomainByDivision(newValue);
+        $scope.domain = getEnsemblSubdomainByDivision(newValue, $scope.genomes);
     }
 
 }]);

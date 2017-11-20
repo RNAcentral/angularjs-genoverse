@@ -9,6 +9,7 @@
          * @returns {string} - scientific name of species with whitespaces replaces with underscores
          */
         return function(input) {
+            debugger;
             // Canis familiaris is a special case
             if (input == 'Canis familiaris') {
                 input = 'Canis lupus familiaris';
@@ -49,6 +50,42 @@
     }
     chrToUCSC.$inject = [];
 
+    function getGenomeObjectByName() {
+        /**
+         * Returns an object from $scope.genomes Array by its species name or null, if not found.
+         *
+         * @param name {string} e.g. "Homo sapiens" or "homo_sapiens" (like in url) or "human" (synonym)
+         * @param genomes {Array} e.g. [{'species': 'Homo sapiens', 'synonyms': ['human'], 'assembly': 'GRCh38', 'assembly_ucsc': 'hg38', 'taxid': 9606, 'division': 'Ensembl', 'example_location': {'chromosome': 'X','start': 73792205,'end': 73829231}]
+         * @returns {Object || null} element of genomes Array
+         */
+        return function(name, genomes) {
+            name = name.replace(/_/g, ' '); // if name was urlencoded, replace '_' with whitespaces
+
+            for (var i = 0; i < genomes.length; i++) {
+                if (name.toLowerCase() == genomes[i].species.toLowerCase()) { // test scientific name
+                    console.log("genome = ", genomes[i])
+                    return genomes[i];
+                }
+                else { // if name is not a scientific name, may be it's a synonym?
+                    var synonyms = []; // convert all synonyms to lower case to make case-insensitive comparison
+
+                    genomes[i].synonyms.forEach(function(synonym) {
+                        synonyms.push(synonym.toLowerCase());
+                    });
+
+                    if (synonyms.indexOf(name.toLowerCase()) > -1) {
+                      console.log("genome = ", genomes[i]);
+                      return genomes[i];
+                    }
+                }
+            }
+
+            return null; // if no match found, return null
+        }
+    }
+    getGenomeObjectByName.$inject = [];
+
+
     function genoverse($filter, $timeout) {
         /**
          * Returns the directive definition object for genoverse directive.
@@ -62,6 +99,7 @@
                 chromosomeSize:   '=?',
                 start:            '=',
                 end:              '=',
+                genomes:          '=?', // this is our addition, not in original genome-browser
 
                 highlights:       '=?',
                 plugins:          '=?',
@@ -88,274 +126,6 @@
                 "</div>",
             transclude: true,
             controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
-                var genomes = [
-                    // Ensembl
-                    {
-                        'species': 'Homo sapiens',
-                        'synonyms': ['human'],
-                        'assembly': 'GRCh38',
-                        'assembly_ucsc': 'hg38',
-                        'taxid': 9606,
-                        'division': 'Ensembl',
-                        'example_location': {
-                            'chromosome': 'X',
-                            'start': 73819307,
-                            'end': 73856333
-                        }
-                    },
-                    {
-                        'species': 'Mus musculus',
-                        'synonyms': ['mouse'],
-                        'assembly': 'GRCm38',
-                        'assembly_ucsc': 'mm10',
-                        'taxid': 10090,
-                        'division': 'Ensembl',
-                        'example_location': {
-                            'chromosome': 1,
-                            'start': 86351908,
-                            'end': 86352200
-                        }
-                    },
-                    {
-                        'species': 'Danio rerio',
-                        'synonyms': ['zebrafish'],
-                        'assembly': 'GRCz10',
-                        'assembly_ucsc': 'danRer10',
-                        'taxid': 7955,
-                        'division': 'Ensembl',
-                        'example_location': {
-                            'chromosome': 9,
-                            'start': 7633910,
-                            'end': 7634210
-                        }
-                    },
-                    {
-                        'species': 'Bos taurus',
-                        'synonyms': ['cow'],
-                        'assembly': 'UMD3.1',
-                        'assembly_ucsc': 'bosTau6',
-                        'taxid': 9913,
-                        'division': 'Ensembl',
-                        'example_location': {
-                            'chromosome': 15,
-                            'start': 82197673,
-                            'end': 82197837
-                        }
-                    },
-                    {
-                        'species': 'Rattus norvegicus',
-                        'synonyms': ['rat'],
-                        'assembly': 'Rnor_6.0',
-                        'assembly_ucsc': 'rn6',
-                        'taxid': 10116,
-                        'division': 'Ensembl',
-                        'example_location': {
-                            'chromosome': 'X',
-                            'start': 118277628,
-                            'end': 118277850
-                        }
-                    },
-                    {
-                        'species': 'Felis catus',
-                        'synonyms': ['cat'],
-                        'assembly': 'Felis_catus_6.2',
-                        'assembly_ucsc': 'felCat5',
-                        'taxid': 9685,
-                        'division': 'Ensembl',
-                        'example_location': {
-                            'chromosome': 'X',
-                            'start': 18058223,
-                            'end': 18058546
-                        }
-                    },
-                    {
-                        'species': 'Macaca mulatta',
-                        'synonyms': ['macaque'],
-                        'assembly': 'MMUL_1',
-                        'assembly_ucsc': '',  // no matching assembly
-                        'taxid': 9544,
-                        'division': 'Ensembl',
-                        'example_location': {
-                            'chromosome': 1,
-                            'start': 146238837,
-                            'end': 146238946
-                        }
-                    },
-                    {
-                        'species': 'Pan troglodytes',
-                        'synonyms': ['chimp'],
-                        'assembly': 'CHIMP2.1.4',
-                        'assembly_ucsc': 'panTro4',
-                        'taxid': 9598,
-                        'division': 'Ensembl',
-                        'example_location': {
-                            'chromosome': 11,
-                            'start': 78369004,
-                            'end': 78369219
-                        }
-                    },
-                    {
-                        'species': 'Canis familiaris',
-                        'synonyms': ['dog', 'Canis lupus familiaris'],
-                        'assembly': 'CanFam3.1',
-                        'assembly_ucsc': 'canFam3',
-                        'taxid': 9615,
-                        'division': 'Ensembl',
-                        'example_location': {
-                            'chromosome': 19,
-                            'start': 22006909,
-                            'end': 22007119
-                        }
-                    },
-                    {
-                        'species': 'Gallus gallus',
-                        'synonyms': ['chicken'],
-                        'assembly': 'Galgal4',
-                        'assembly_ucsc': 'galGal4',
-                        'taxid': 9031,
-                        'division': 'Ensembl',
-                        'example_location': {
-                            'chromosome': 9,
-                            'start': 15676031,
-                            'end': 15676160
-                        }
-                    },
-                    {
-                        'species': 'Xenopus tropicalis',
-                        'synonyms': ['frog'],
-                        'assembly': 'JGI_4.2',
-                        'assembly_ucsc': 'xenTro3',
-                        'taxid': 8364,
-                        'division': 'Ensembl',
-                        'example_location': {
-                            'chromosome': 'NC_006839',
-                            'start': 11649,
-                            'end': 11717
-                        }
-                    },
-                    // Ensembl Fungi
-                    {
-                        'species': 'Saccharomyces cerevisiae',
-                        'synonyms': ['budding yeast', 'Saccharomyces cerevisiae S288c'],
-                        'assembly': 'R64-1-1',
-                        'assembly_ucsc': '',
-                        'taxid': 559292,
-                        'division': 'Ensembl Fungi',
-                        'example_location': {
-                            'chromosome': 'XII',
-                            'start': 856709,
-                            'end': 856919
-                        }
-                    },
-                    {
-                        'species': 'Schizosaccharomyces pombe',
-                        'synonyms': ['fission yeast'],
-                        'assembly': 'ASM294v2',
-                        'assembly_ucsc': '',
-                        'taxid': 4896,
-                        'division': 'Ensembl Fungi',
-                        'example_location': {
-                            'chromosome': 'I',
-                            'start': 540951,
-                            'end': 544327
-                        }
-                    },
-                    // Ensembl Metazoa
-                    {
-                        'species': 'Caenorhabditis elegans',
-                        'synonyms': ['worm'],
-                        'assembly': 'WBcel235',
-                        'assembly_ucsc': '',
-                        'taxid': 6239,
-                        'division': 'Ensembl Metazoa',
-                        'example_location': {
-                            'chromosome': 'III',
-                            'start': 11467363,
-                            'end': 11467705
-                        }
-                    },
-                    {
-                        'species': 'Drosophila melanogaster',
-                        'synonyms': ['fly'],
-                        'assembly': 'BDGP6',
-                        'assembly_ucsc': 'dm6',
-                        'taxid': 7227,
-                        'division': 'Ensembl Metazoa',
-                        'example_location': {
-                            'chromosome': '3R',
-                            'start': 7474331,
-                            'end': 7475217
-                        }
-                    },
-                    {
-                        'species': 'Bombyx mori',
-                        'synonyms': ['silkworm'],
-                        'assembly': 'GCA_000151625.1',
-                        'assembly_ucsc': '',
-                        'taxid': 7091,
-                        'division': 'Ensembl Metazoa',
-                        'example_location': {
-                            'chromosome': 'scaf16',
-                            'start': 6180018,
-                            'end': 6180422
-                        }
-                    },
-                    {
-                        'species': 'Anopheles gambiae',
-                        'synonyms': [],
-                        'assembly': 'AgamP4',
-                        'assembly_ucsc': '',
-                        'taxid': 7165,
-                        'division': 'Ensembl Metazoa',
-                        'example_location': {
-                            'chromosome': '2R',
-                            'start': 34644956,
-                            'end': 34645131
-                        }
-                    },
-                    // Ensembl Protists
-                    {
-                        'species': 'Dictyostelium discoideum',
-                        'synonyms': [],
-                        'assembly': 'dictybase.01',
-                        'assembly_ucsc': '',
-                        'taxid': 44689,
-                        'division': 'Ensembl Protists',
-                        'example_location': {
-                            'chromosome': 2,
-                            'start': 7874546,
-                            'end': 7876498
-                        }
-                    },
-                    {
-                        'species': 'Plasmodium falciparum',
-                        'synonyms': [],
-                        'assembly': 'ASM276v1',
-                        'assembly_ucsc': '',
-                        'taxid': 5833,
-                        'division': 'Ensembl Protists',
-                        'example_location': {
-                            'chromosome': 13,
-                            'start': 2796339,
-                            'end': 2798488
-                        }
-                    },
-                    // Ensembl Plants
-                    {
-                        'species': 'Arabidopsis thaliana',
-                        'synonyms': [],
-                        'assembly': 'TAIR10',
-                        'assembly_ucsc': '',
-                        'taxid': 3702,
-                        'division': 'Ensembl Plants',
-                        'example_location': {
-                            'chromosome': 2,
-                            'start': 18819643,
-                            'end': 18822629
-                        }
-                    }
-                ];
-
                 var ctrl = this;
 
                 // Variables
@@ -408,8 +178,7 @@
                         chr: $scope.chr,
                         start: $scope.start,
                         end: $scope.end,
-                        species: $scope.genome.species, // TODO: may be we don't need this?
-                        genome: $filter('urlencodeSpecies')($scope.genome.species),
+                        genome: $filter('urlencodeSpecies')($scope.genome),
                     };
 
                     // What is displayed
@@ -516,7 +285,7 @@
                  */
                 ctrl.setGenoverseToAngularWatches = function() {
                     var speciesWatch = $scope.$watch('browser.species', function(newValue, oldValue) {
-                        $scope.genome = getGenomeByName(newValue);
+                        $scope.genome = newValue;
                     });
 
                     var chrWatch = $scope.$watch('browser.chr', function(newValue, oldValue) {
@@ -575,12 +344,13 @@
                                 delete $scope.browser; // clear old instance of browser
 
                                 // set the default location for the browser
-                                if (_.pluck(genomes, 'species').index(newValue) === -1) {
-                                    $scope.chr = genomes[newValue].example_location.chr;
-                                    $scope.start = genomes[newValue].example_location.start;
-                                    $scope.end = genomes[newValue].example_location.end;
-                                } else {
+                                if (!$scope.genomes || !$filter("getGenomeObjectByName")(newValue, $scope.genomes)) {
                                     alert("Example location for genome '" + newValue + "' not specified");
+                                } else {
+                                    var genomeObject = $filter("getGenomeObjectByName")(newValue, $scope.genomes);
+                                    $scope.chr = genomeObject.example_location.chr;
+                                    $scope.start = genomeObject.example_location.start;
+                                    $scope.end = genomeObject.example_location.end;
                                 }
 
                                 // create a new instance of browser and set the new watches for it
@@ -603,36 +373,6 @@
                     // resize might change viewport location - digest these changes
                     $timeout(angular.noop)
                 };
-
-                // Helper functions
-                // ----------------
-
-                /**
-                 * Returns an object from genomes Array by its species name or null, if not found.
-                 *
-                 * @param name {string} e.g. "Homo sapiens" or "homo_sapiens" (like in url) or "human" (synonym)
-                 * @returns {Object || null} element of genomes Array
-                 */
-                function getGenomeByName(name) {
-                    name = name.replace(/_/g, ' '); // if name was urlencoded, replace '_' with whitespaces
-
-                    for (var i = 0; i < genomes.length; i++) {
-                        if (name.toLowerCase() == genomes[i].species.toLowerCase()) { // test scientific name
-                            return genomes[i];
-                        }
-                        else { // if name is not a scientific name, may be it's a synonym?
-                            var synonyms = []; // convert all synonyms to lower case to make case-insensitive comparison
-
-                            genomes[i].synonyms.forEach(function(synonym) {
-                                synonyms.push(synonym.toLowerCase());
-                            });
-
-                            if (synonyms.indexOf(name.toLowerCase()) > -1) return genomes[i];
-                        }
-                    }
-
-                    return null; // if no match found, return null
-                }
             }],
             link: function(scope, $element, attrs, ctrl, transcludeFn) {
                 // We are going to temporarily add child directive's template to $element
@@ -772,6 +512,7 @@
         .filter("urlencodeSpecies", urlencodeSpecies)
         .filter("urldecodeSpecies", urldecodeSpecies)
         .filter("chrToUCSC", chrToUCSC)
+        .filter("getGenomeObjectByName", getGenomeObjectByName)
         .directive("genoverse", genoverse)
         .directive("genoverseTrack", genoverseTrack);
 })();
