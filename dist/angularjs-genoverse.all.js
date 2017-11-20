@@ -9,7 +9,6 @@
          * @returns {string} - scientific name of species with whitespaces replaces with underscores
          */
         return function(input) {
-            debugger;
             // Canis familiaris is a special case
             if (input == 'Canis familiaris') {
                 input = 'Canis lupus familiaris';
