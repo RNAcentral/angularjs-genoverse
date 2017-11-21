@@ -91,10 +91,12 @@ For more details, see: https://github.com/simonbrent/Genoverse/blob/master/docs/
 
 Attribute          | Type               | Required | Default                                              | Description
 ------------------ | ------------------ | -------- | ---------------------------------------------------- | -----------
-genome             | Object             | true     |                                                      | {<br>   'species': 'Homo sapiens',<br>   'synonyms': ['human'],<br>   'assembly': 'GRCh38',<br>   'assembly_ucsc': 'hg38',<br>   'taxid': 9606,<br>   'division': 'Ensembl',<br>   'example_location': {<br>     'chromosome': 'X',<br>     'start': 73792205,<br>     'end': 73829231<br> }
-chromosome         | String             | true     |                                                      | Ensembl-style chromosome name, e.g. 'X' or '1' or '3R' or 'III'
+genome             | Object             | true     |                                                      | Name of genome to display with lowercase letters and underscore, e.g. 'homo_sapiens'
+chr                | String             | true     |                                                      | Ensembl-style chromosome name, e.g. 'X' or '1' or '3R' or 'III'
 start              | Number             | true     |                                                      | Current genome location, where viewport starts
 end                | Number             | true     |                                                      | Current genome location, where viewport ends
+example-locations  | Object             | false    |                                                      | What location to display, when switching to another species e.g. {'homo_sapiens': {'chr': 'X', 'start': 73819307, 'end': 73856333}}
+container:         | String             | false    |                                                      | If you want Genoverse to change width as you resize window, specify this container element.
 highlights         | Array              | false    | []                                                   | Array of regions to highlight, in the form `{ "start": 100, "end", 200, "label": "My highlight", "removable": false }`
 plugins            | Array              | false    | ['controlPanel', 'karyotype', 'resizer', 'fileDrop'] | Array of plugins to use (chosen from `Genoverse/js/plugins`) ! Default different from original Genoverse
 url-param-template | String/Boolean     | false    | false                                                | Replace url upon browser drags with this template interpolation  ! Default different from original Genoverse
