@@ -25,6 +25,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
     $scope.genomes = [
         // Ensembl
         {
+            'ensemblSpecies': 'homo_sapiens',
             'species': 'Homo sapiens',
             'synonyms': ['human'],
             'assembly': 'GRCh38',
@@ -38,6 +39,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             }
         },
         {
+            'ensemblSpecies': 'mus_musculus',
             'species': 'Mus musculus',
             'synonyms': ['mouse'],
             'assembly': 'GRCm38',
@@ -51,6 +53,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             }
         },
         {
+            'ensemblSpecies': 'danio_rerio',
             'species': 'Danio rerio',
             'synonyms': ['zebrafish'],
             'assembly': 'GRCz10',
@@ -64,6 +67,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             }
         },
         {
+            'ensemblSpecies': 'bos_taurus',
             'species': 'Bos taurus',
             'synonyms': ['cow'],
             'assembly': 'UMD3.1',
@@ -77,6 +81,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             }
         },
         {
+            'ensemblSpecies': 'rattus_norvegicus',
             'species': 'Rattus norvegicus',
             'synonyms': ['rat'],
             'assembly': 'Rnor_6.0',
@@ -90,6 +95,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             }
         },
         // {
+        //     'ensemblSpecies': 'felis_catus',
         //     'species': 'Felis catus',
         //     'synonyms': ['cat'],
         //     'assembly': 'Felis_catus_6.2',
@@ -103,6 +109,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         //     }
         // },
         // {
+        //     'ensemblSpecies': 'macaca_mulatta',
         //     'species': 'Macaca mulatta',
         //     'synonyms': ['macaque'],
         //     'assembly': 'MMUL_1',
@@ -116,6 +123,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         //     }
         // },
         {
+            'ensemblSpecies': 'pan_troglodytes',
             'species': 'Pan troglodytes',
             'synonyms': ['chimp'],
             'assembly': 'CHIMP2.1.4',
@@ -129,6 +137,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             }
         },
         {
+            'ensemblSpecies': 'canis_lupus_familiaris',
             'species': 'Canis familiaris',
             'synonyms': ['dog', 'Canis lupus familiaris'],
             'assembly': 'CanFam3.1',
@@ -142,6 +151,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             }
         },
         // {
+        //     'ensemblSpecies': 'gallus_gallus',
         //     'species': 'Gallus gallus',
         //     'synonyms': ['chicken'],
         //     'assembly': 'Galgal4',
@@ -155,6 +165,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         //     }
         // },
         // {
+        //     'ensemblSpecies': 'xenopus_tropicalis',
         //     'species': 'Xenopus tropicalis',
         //     'synonyms': ['frog'],
         //     'assembly': 'JGI_4.2',
@@ -169,6 +180,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         // },
         // Ensembl Fungi
         // {
+        //     'ensemblSpecies': 'saccharomyces_cerevisiae',
         //     'species': 'Saccharomyces cerevisiae',
         //     'synonyms': ['budding yeast', 'Saccharomyces cerevisiae S288c'],
         //     'assembly': 'R64-1-1',
@@ -182,6 +194,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         //     }
         // },
         {
+            'ensemblSpecies': 'schizosaccharomyces_pombe',
             'species': 'Schizosaccharomyces pombe',
             'synonyms': ['fission yeast'],
             'assembly': 'ASM294v2',
@@ -196,6 +209,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         },
         // Ensembl Metazoa
         {
+            'ensemblSpecies': 'caenorhabditis_elegans',
             'species': 'Caenorhabditis elegans',
             'synonyms': ['worm'],
             'assembly': 'WBcel235',
@@ -209,6 +223,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             }
         },
         {
+            'ensemblSpecies': 'drosophila_melanogaster',
             'species': 'Drosophila melanogaster',
             'synonyms': ['fly'],
             'assembly': 'BDGP6',
@@ -222,6 +237,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             }
         },
         {
+            'ensemblSpecies': 'bombyx_mori',
             'species': 'Bombyx mori',
             'synonyms': ['silkworm'],
             'assembly': 'GCA_000151625.1',
@@ -235,6 +251,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             }
         },
         // {
+        //     'ensemblSpecies': 'anopheles_gambiae',
         //     'species': 'Anopheles gambiae',
         //     'synonyms': [],
         //     'assembly': 'AgamP4',
@@ -247,8 +264,10 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         //         'end': 34645131
         //     }
         // },
+
         // Ensembl Protists
         {
+            'ensemblSpecies': 'dictyostelium_discoideum',
             'species': 'Dictyostelium discoideum',
             'synonyms': [],
             'assembly': 'dictybase.01',
@@ -262,6 +281,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             }
         },
         // {
+        //     'ensemblSpecies': 'plasmodium_falciparum',
         //     'species': 'Plasmodium falciparum',
         //     'synonyms': [],
         //     'assembly': 'ASM276v1',
@@ -274,8 +294,10 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         //         'end': 2798488
         //     }
         // },
+
         // Ensembl Plants
         {
+            'ensemblSpecies': 'arabidopsis_thaliana',
             'species': 'Arabidopsis thaliana',
             'synonyms': [],
             'assembly': 'TAIR10',
@@ -289,6 +311,20 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
             }
         }
     ];
+
+    $scope.genomeNames = [];
+    for (var i = 0; i < $scope.genomes.length; i++) {
+        $scope.genomeNames.push($scope.genomes[i].ensemblSpecies);
+    }
+
+    $scope.exampleLocations = {};
+    for (var i = 0; i < $scope.genomes.length; i++) {
+        $scope.exampleLocations[$scope.genomes[i].ensemblSpecies] = {
+            'chr': $scope.genomes[i].example_location.chromosome,
+            'start': $scope.genomes[i].example_location.start,
+            'end': $scope.genomes[i].example_location.end
+        }
+    }
 
     /**
      * Dynamically determine whether to use E! or EG REST API based on species.
@@ -390,7 +426,8 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
      * @param genome {String}
      * @param genomes {Array} e.g.
      * [{
-     *     'species': 'Mus musculus', 'synonyms': ['mouse'], 'assembly': 'GRCm38', 'assembly_ucsc': 'mm10',
+     *     'ensemblSpecies': 'mus_musculus', 'species': 'Mus musculus', 'synonyms': ['mouse'],
+     *     'assembly': 'GRCm38', 'assembly_ucsc': 'mm10',
      *     'taxid': 10090, 'division': 'Ensembl',
      *     'example_location': {'chromosome': 1, 'start': 86351981, 'end': 86352127,}
      * }, ...]
@@ -399,7 +436,18 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
     function getEnsemblSubdomainByDivision(genome, genomes) {
         var subdomain;
 
-        var genomeObject = $filter("getGenomeObjectByName")(genome, genomes);
+        // get genome object from Genomes
+        var genomeObject;
+        for (var i = 0; i < $scope.genomes.length; i++) {
+            if (genome === $scope.genomes[i].ensemblSpecies) {
+                genomeObject = $scope.genomes[i];
+                break;
+            }
+        }
+        if (!genomeObject) {
+            console.log("Can't get genomeObject for genome: " + genome);
+            return
+        }
 
         if (genomeObject.division == 'Ensembl') {
             subdomain = 'ensembl.org';
@@ -418,9 +466,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         return subdomain;
     }
 
-
-    // from JS standpoint, genome and genomes[i] == genome are different objects, but we want exactly the same, so:
-    $scope.genome = $scope.genomes[0].species;
+    $scope.genome = $scope.genomes[0].ensemblSpecies;
 
     // get domain for Ensembl links
     $scope.domain = getEnsemblSubdomainByDivision($scope.genome, $scope.genomes);
@@ -505,7 +551,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
     function setUrl(newValue, oldValue) {
         // set the full url
         $location.search({
-            species: $filter('urlencodeSpecies')($scope.genome),  // filter is from Genoverse module
+            species: $scope.genome,  // filter is from Genoverse module
             chromosome: $scope.chromosome,
             start: $scope.start,
             end: $scope.end

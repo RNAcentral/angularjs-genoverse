@@ -9,11 +9,15 @@
          * @returns {string} - scientific name of species with whitespaces replaces with underscores
          */
         return function(input) {
-            // Canis familiaris is a special case
-            if (input == 'Canis familiaris') {
-                input = 'Canis lupus familiaris';
+            if (input) {
+                // Canis familiaris is a special case
+                if (input == 'Canis familiaris') {
+                    input = 'Canis lupus familiaris';
+                }
+                return input.replace(/ /g, '_').toLowerCase();
+            } else {
+                return input;
             }
-            return input.replace(/ /g, '_').toLowerCase();
         }
     }
     urlencodeSpecies.$inject = [];
@@ -49,42 +53,6 @@
     }
     chrToUCSC.$inject = [];
 
-    function getGenomeObjectByName() {
-        /**
-         * Returns an object from $scope.genomes Array by its species name or null, if not found.
-         *
-         * @param name {string} e.g. "Homo sapiens" or "homo_sapiens" (like in url) or "human" (synonym)
-         * @param genomes {Array} e.g. [{'species': 'Homo sapiens', 'synonyms': ['human'], 'assembly': 'GRCh38', 'assembly_ucsc': 'hg38', 'taxid': 9606, 'division': 'Ensembl', 'example_location': {'chromosome': 'X','start': 73792205,'end': 73829231}]
-         * @returns {Object || null} element of genomes Array
-         */
-        return function(name, genomes) {
-            name = name.replace(/_/g, ' '); // if name was urlencoded, replace '_' with whitespaces
-
-            for (var i = 0; i < genomes.length; i++) {
-                if (name.toLowerCase() == genomes[i].species.toLowerCase()) { // test scientific name
-                    console.log("genome = ", genomes[i])
-                    return genomes[i];
-                }
-                else { // if name is not a scientific name, may be it's a synonym?
-                    var synonyms = []; // convert all synonyms to lower case to make case-insensitive comparison
-
-                    genomes[i].synonyms.forEach(function(synonym) {
-                        synonyms.push(synonym.toLowerCase());
-                    });
-
-                    if (synonyms.indexOf(name.toLowerCase()) > -1) {
-                      console.log("genome = ", genomes[i]);
-                      return genomes[i];
-                    }
-                }
-            }
-
-            return null; // if no match found, return null
-        }
-    }
-    getGenomeObjectByName.$inject = [];
-
-
     function genoverse($filter, $timeout) {
         /**
          * Returns the directive definition object for genoverse directive.
@@ -98,7 +66,9 @@
                 chromosomeSize:   '=?',
                 start:            '=',
                 end:              '=',
-                genomes:          '=?', // this is our addition, not in original genome-browser
+
+                exampleLocations: '=?', // our addition, allows to switch species
+                container:        '@?', // our addition, allows for "reposnsive" width
 
                 highlights:       '=?',
                 plugins:          '=?',
@@ -169,7 +139,6 @@
 
                     // Required + hard-coded
                     // ---------------------
-
                     var genoverseConfig = {
                         container: $element.find('#genoverse'),
                         width: $('.container').width(),
@@ -283,10 +252,6 @@
                  * @returns {Array} - watches as functions - call them to unbind them
                  */
                 ctrl.setGenoverseToAngularWatches = function() {
-                    var speciesWatch = $scope.$watch('browser.species', function(newValue, oldValue) {
-                        $scope.genome = newValue;
-                    });
-
                     var chrWatch = $scope.$watch('browser.chr', function(newValue, oldValue) {
                         $scope.chr = newValue;
                     });
@@ -303,7 +268,7 @@
                         $scope.chromosomeSize = newValue;
                     });
 
-                    return [speciesWatch, chrWatch, startWatch, endWatch, chromosomeSizeWatch];
+                    return [chrWatch, startWatch, endWatch, chromosomeSizeWatch];
                 };
 
                 /**
@@ -333,28 +298,23 @@
 
                     var speciesWatch = $scope.$watch('genome', function(newValue, oldValue) {
                         if (!angular.equals(newValue, oldValue)) {
-                            if (!Genoverse.Genomes.hasOwnAttribute(newValue)) {
-                                alert("Genome '" + newValue + "' not found");
+                            // destroy the old instance of browser and watches
+                            $scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
+                            $scope.angularToGenoverseWatches.forEach(function (element) { element(); }); // clear old watches
+                            $scope.browser.destroy(); // destroy genoverse and all callbacks and ajax requests
+                            delete $scope.browser; // clear old instance of browser
+
+                            // set the default location for the browser
+                            if ($scope.exampleLocations[newValue]) {
+                                $scope.chr = $scope.exampleLocations[newValue].chr;
+                                $scope.start = $scope.exampleLocations[newValue].start;
+                                $scope.end = $scope.exampleLocations[newValue].end;
                             } else {
-                                // destroy the old instance of browser and watches
-                                $scope.genoverseToAngularWatches.forEach(function (element) { element(); }); // clear old watches
-                                $scope.angularToGenoverseWatches.forEach(function (element) { element(); }); // clear old watches
-                                $scope.browser.destroy(); // destroy genoverse and all callbacks and ajax requests
-                                delete $scope.browser; // clear old instance of browser
-
-                                // set the default location for the browser
-                                if (!$scope.genomes || !$filter("getGenomeObjectByName")(newValue, $scope.genomes)) {
-                                    alert("Example location for genome '" + newValue + "' not specified");
-                                } else {
-                                    var genomeObject = $filter("getGenomeObjectByName")(newValue, $scope.genomes);
-                                    $scope.chr = genomeObject.example_location.chr;
-                                    $scope.start = genomeObject.example_location.start;
-                                    $scope.end = genomeObject.example_location.end;
-                                }
-
-                                // create a new instance of browser and set the new watches for it
-                                ctrl.render();
+                                alert("Can't find example location for genome ", newValue);
                             }
+
+                            // create a new instance of browser and set the new watches for it
+                            ctrl.render();
                         }
                     });
 
@@ -365,12 +325,14 @@
                  * Makes browser "responsive" - if container changes width, so does the browser.
                  */
                 ctrl.setGenoverseWidth = function() {
-                    //TODO: make this independent on layout
-                    var w = $('.container').width();
-                    $scope.browser.setWidth(w);
+                    if ($scope.container) {
+                        // if $scope.container passed, makes browser width responsive
+                        var w = $($scope.container).width();
+                        $scope.browser.setWidth(w);
 
-                    // resize might change viewport location - digest these changes
-                    $timeout(angular.noop)
+                        // resize might change viewport location - digest these changes
+                        $timeout(angular.noop)
+                    }
                 };
             }],
             link: function(scope, $element, attrs, ctrl, transcludeFn) {
@@ -511,7 +473,6 @@
         .filter("urlencodeSpecies", urlencodeSpecies)
         .filter("urldecodeSpecies", urldecodeSpecies)
         .filter("chrToUCSC", chrToUCSC)
-        .filter("getGenomeObjectByName", getGenomeObjectByName)
         .directive("genoverse", genoverse)
         .directive("genoverseTrack", genoverseTrack);
 })();

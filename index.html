@@ -63,7 +63,7 @@ limitations under the License.
                     <div class="row" style="padding-left: 15px;">
                         <div class="col-lg-3 col-md-3 col-sm-12">
                             <label for="genomic-species-select">Species</label>
-                            <select id="genomic-species-select" class="form-control" ng-options="genome as genome.species for genome in genomes" ng-model="genome.species">
+                            <select id="genomic-species-select" class="form-control" ng-options="genome as (genome | urldecodeSpecies) for genome in genomeNames" ng-model="genome">
                             </select>
                         </div>
                         <div class="ol-lg-2 col-md-2 col-sm-4">
@@ -91,7 +91,7 @@ limitations under the License.
                     <a href='http://genome.ucsc.edu/cgi-bin/hgTracks?db={{ $filter('getGenomeObjectByName')(genome, genomes).assembly_ucsc }}&position={{ chromosome | chrToUCSC }}%3A{{ start }}-{{ end }}' target='_blank'>UCSC</a>
                 </span>
             </p> -->
-            <genoverse genome="genome" chr="chromosome" start="start" end="end" genomes="genomes">
+            <genoverse genome="genome" chr="chromosome" start="start" end="end" example-locations="exampleLocations" container="'.container'">
                 <genoverse-track name="'Sequence'" model="Genoverse.Track.Model.Sequence.Ensembl" view="Genoverse.Track.View.Sequence" controller="Genoverse.Track.Controller.Sequence" url="urls.sequence" resizable="'auto'" auto-height="true" hide-empty="false" extra="{100000: false}"></genoverse-track>
                 <genoverse-track name="'Genes'" labels="true" info="'Ensembl API genes'" model="Genoverse.Track.Model.Gene.Ensembl" view="Genoverse.Track.View.Gene.Ensembl" url="urls.genes" resizable="'auto'" auto-height="true" hide-empty="false"></genoverse-track>
                 <genoverse-track name="'Transcripts'" labels="true" info="'Ensembl API transcripts'" model="Genoverse.Track.Model.Transcript.Ensembl" view="Genoverse.Track.View.Transcript.Ensembl" url="urls.transcripts" resizable="'auto'" auto-height="true" hide-empty="false"></genoverse-track>
