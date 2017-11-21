@@ -326,6 +326,73 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         }
     }
 
+    $scope.genome = $scope.genomes[0].ensemblSpecies;
+
+    // get domain for Ensembl links
+    $scope.domain = getEnsemblSubdomainByDivision($scope.genome, $scope.genomes);
+
+    $scope.chromosome = "X";
+    $scope.start = 73819307;
+    $scope.end = 73856333;
+
+    $scope.Genoverse = Genoverse;
+
+    $scope.urls = {
+        sequence: function () { // Sequence track configuration
+            var species = $filter('urlencodeSpecies')($scope.genome);
+            var endpoint = getEndpoint(species);
+            return '__ENDPOINT__/sequence/region/__SPECIES__/__CHR__:__START__-__END__?content-type=text/plain'
+                .replace('__ENDPOINT__', endpoint)
+                .replace('__SPECIES__', species);
+        },
+        genes: function() { // Genes track configuration
+            var species = $filter('urlencodeSpecies')($scope.genome);
+            var endpoint = getEndpoint(species);
+            return '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=gene;content-type=application/json'
+                .replace('__ENDPOINT__', endpoint)
+                .replace('__SPECIES__', species);
+        },
+        transcripts: function() { // Transcripts track configuration
+            var species = $filter('urlencodeSpecies')($scope.genome);
+            var endpoint = getEndpoint(species);
+            return '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'
+                .replace('__ENDPOINT__', endpoint)
+                .replace('__SPECIES__', species);
+        }
+    };
+
+    // reflect any changes in genome in address bar
+    $scope.$watch('genome', setUrl);
+    $scope.$watch('chromosome', setUrl);
+    $scope.$watch('start', setUrl);
+    $scope.$watch('stop', setUrl);
+
+    $scope.$watch('genome', setDomain);
+
+
+    $scope.getGenomeObject = getGenomeObject;
+
+    // Method definitions
+    // ------------------
+
+    /**
+     * Sets the url in address bar to reflect the changes in browser location
+     */
+    function setUrl(newValue, oldValue) {
+        // set the full url
+        $location.search({
+            species: $scope.genome,  // filter is from Genoverse module
+            chromosome: $scope.chromosome,
+            start: $scope.start,
+            end: $scope.end
+        });
+        $location.replace();
+    }
+
+    function setDomain(newValue, oldValue) {
+        $scope.domain = getEnsemblSubdomainByDivision(newValue, $scope.genomes);
+    }
+
     /**
      * Dynamically determine whether to use E! or EG REST API based on species.
      * If species not in E!, use EG.
@@ -420,6 +487,26 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
     }
 
     /**
+    * @param genome {String} - e.g. 'homo_sapient'
+    * @param genomes {Array} - contents of $scope.genome
+    * @returns {String} element of genomes array
+    */
+    function getGenomeObject(genome, genomes) {
+        // get genome object from Genomes
+        var genomeObject;
+        for (var i = 0; i < $scope.genomes.length; i++) {
+            if (genome === $scope.genomes[i].ensemblSpecies) {
+                genomeObject = $scope.genomes[i];
+                return genomeObject;
+            }
+        }
+
+        // if we're here, this is a failure
+        console.log("Can't get genomeObject for genome: " + genome);
+        return null;
+    }
+
+    /**
      * Takes a genome on input, looks into its division attribute and returns the corresponding Ensembl
      * subdomain
      *
@@ -437,17 +524,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         var subdomain;
 
         // get genome object from Genomes
-        var genomeObject;
-        for (var i = 0; i < $scope.genomes.length; i++) {
-            if (genome === $scope.genomes[i].ensemblSpecies) {
-                genomeObject = $scope.genomes[i];
-                break;
-            }
-        }
-        if (!genomeObject) {
-            console.log("Can't get genomeObject for genome: " + genome);
-            return
-        }
+        var genomeObject = getGenomeObject(genome, genomes);
 
         if (genomeObject.division == 'Ensembl') {
             subdomain = 'ensembl.org';
@@ -464,103 +541,6 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
         }
 
         return subdomain;
-    }
-
-    $scope.genome = $scope.genomes[0].ensemblSpecies;
-
-    // get domain for Ensembl links
-    $scope.domain = getEnsemblSubdomainByDivision($scope.genome, $scope.genomes);
-
-    $scope.chromosome = "X";
-    $scope.start = 73819307;
-    $scope.end = 73856333;
-
-    $scope.Genoverse = Genoverse;
-
-    $scope.urls = {
-        sequence: function () { // Sequence track configuration
-            var species = $filter('urlencodeSpecies')($scope.genome);
-            var endpoint = getEndpoint(species);
-            return '__ENDPOINT__/sequence/region/__SPECIES__/__CHR__:__START__-__END__?content-type=text/plain'
-                .replace('__ENDPOINT__', endpoint)
-                .replace('__SPECIES__', species);
-        },
-        genes: function() { // Genes track configuration
-            var species = $filter('urlencodeSpecies')($scope.genome);
-            var endpoint = getEndpoint(species);
-            return '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=gene;content-type=application/json'
-                .replace('__ENDPOINT__', endpoint)
-                .replace('__SPECIES__', species);
-        },
-        transcripts: function() { // Transcripts track configuration
-            var species = $filter('urlencodeSpecies')($scope.genome);
-            var endpoint = getEndpoint(species);
-            return '__ENDPOINT__/overlap/region/__SPECIES__/__CHR__:__START__-__END__?feature=transcript;feature=exon;feature=cds;content-type=application/json'
-                .replace('__ENDPOINT__', endpoint)
-                .replace('__SPECIES__', species);
-        }
-    };
-
-    // We want to achieve the following behavior declaratively:
-    //
-    // return Genoverse.Track.extend({
-    //     name: 'Sequence',
-    //     model: Genoverse.Track.Model.Sequence.Ensembl.extend({ url: url }),
-    //     view: Genoverse.Track.View.Sequence,
-    //     controller: Genoverse.Track.Controller.Sequence,
-    //     resizable: 'auto',
-    //     autoHeight: true,
-    //     100000: false
-    // });
-    //
-    // return Genoverse.Track.extend({
-    //     name: 'Genes',
-    //     info: 'Ensembl API genes',
-    //     labels: true,
-    //     model: Genoverse.Track.Model.Gene.Ensembl.extend({ url: url }),
-    //     view: Genoverse.Track.View.Gene.Ensembl,
-    //     controller: Genoverse.Track.Controller.Ensembl,
-    //     autoHeight: true
-    // });
-    //
-    // return Genoverse.Track.extend({
-    //     name: 'Transcripts',
-    //     info: 'Ensembl API transcripts',
-    //     labels: true,
-    //     model: Genoverse.Track.Model.Transcript.Ensembl.extend({ url: url }),
-    //     view: Genoverse.Track.View.Transcript.Ensembl,
-    //     controller: Genoverse.Track.Controller.Ensembl,
-    //     autoHeight: true
-    // });
-
-
-    // reflect any changes in genome in address bar
-    $scope.$watch('genome', setUrl);
-    $scope.$watch('chromosome', setUrl);
-    $scope.$watch('start', setUrl);
-    $scope.$watch('stop', setUrl);
-
-    $scope.$watch('genome', setDomain);
-
-    // Method definitions
-    // ------------------
-
-    /**
-     * Sets the url in address bar to reflect the changes in browser location
-     */
-    function setUrl(newValue, oldValue) {
-        // set the full url
-        $location.search({
-            species: $scope.genome,  // filter is from Genoverse module
-            chromosome: $scope.chromosome,
-            start: $scope.start,
-            end: $scope.end
-        });
-        $location.replace();
-    }
-
-    function setDomain(newValue, oldValue) {
-        $scope.domain = getEnsemblSubdomainByDivision(newValue, $scope.genomes);
     }
 
 }]);

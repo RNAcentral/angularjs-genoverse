@@ -84,13 +84,13 @@ limitations under the License.
 
             <br>
 
-            <!-- <p class='text-muted'>
+            <p class='text-muted'>
                 <span id='genomic-location' class='margin-right-5px'></span>
-                View in <a href='http://{{domain}}/{{genome | urlencodeSpecies}}/Location/View?r={{chromosome}}:{{start}}-{{end}}' id='ensembl-link' target='_blank'>{{ $filter('getGenomeObjectByName')(genome, genomes).division }}</a>
-                <span ng-show='$filter('getGenomeObjectByName')(genome, genomes).assembly_ucsc' class='ucsc-link'>|
-                    <a href='http://genome.ucsc.edu/cgi-bin/hgTracks?db={{ $filter('getGenomeObjectByName')(genome, genomes).assembly_ucsc }}&position={{ chromosome | chrToUCSC }}%3A{{ start }}-{{ end }}' target='_blank'>UCSC</a>
+                View in <a href='http://{{domain}}/{{genome}}/Location/View?r={{chromosome}}:{{start}}-{{end}}' id='ensembl-link' target='_blank'>{{ getGenomeObject(genome, genomes).division }}</a>
+                <span ng-show='getGenomeObject(genome, genomes).assembly_ucsc' class='ucsc-link'>|
+                    <a href='http://genome.ucsc.edu/cgi-bin/hgTracks?db={{ getGenomeObject(genome, genomes).assembly_ucsc }}&position={{ chromosome | chrToUCSC }}%3A{{ start }}-{{ end }}' target='_blank'>UCSC</a>
                 </span>
-            </p> -->
+            </p>
             <genoverse genome="genome" chr="chromosome" start="start" end="end" example-locations="exampleLocations" container=".container">
                 <genoverse-track name="'Sequence'" model="Genoverse.Track.Model.Sequence.Ensembl" view="Genoverse.Track.View.Sequence" controller="Genoverse.Track.Controller.Sequence" url="urls.sequence" resizable="'auto'" auto-height="true" hide-empty="false" extra="{100000: false}"></genoverse-track>
                 <genoverse-track name="'Genes'" labels="true" info="'Ensembl API genes'" model="Genoverse.Track.Model.Gene.Ensembl" view="Genoverse.Track.View.Gene.Ensembl" url="urls.genes" resizable="'auto'" auto-height="true" hide-empty="false"></genoverse-track>
