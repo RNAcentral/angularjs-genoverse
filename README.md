@@ -17,7 +17,7 @@ A complete example is available at: https://RNAcentral.github.io/angularjs-genov
 Use this directive as a "web component" in your HTML:
 
 ```HTML
-<genoverse genome="genome" chromosome="chromosome" start="start" end="end">
+<genoverse genome="genome" chromosome="chromosome" start="start" end="end" example-locations="exampleLocations" container=".container">
     <genoverse-track name="'Sequence'" model="Genoverse.Track.Model.Sequence.Ensembl" view="Genoverse.Track.View.Sequence" controller="Genoverse.Track.Controller.Sequence" url="urls.sequence" resizable="'auto'" auto-height="true" extra="{100000: false}"></genoverse-track>
     <genoverse-track name="'Genes'" labels="true" info="'Ensembl API genes'" model="Genoverse.Track.Model.Gene.Ensembl" view="Genoverse.Track.View.Gene.Ensembl" url="urls.genes" resizable="'auto'" auto-height="true"></genoverse-track>
     <genoverse-track name="'Transcripts'" labels="true" info="'Ensembl API transcripts'" model="Genoverse.Track.Model.Transcript.Ensembl" view="Genoverse.Track.View.Transcript.Ensembl" url="urls.transcripts" resizable="'auto'" auto-height="true"></genoverse-track>
@@ -158,4 +158,3 @@ depth              | Number             | false    | undefined                  
 threshold          | Number             | false    | Infinity                                 | If threshold is exceeded, features on track are not drawn
 click-tolerance    | Number             | false    | 0                                        | By how many pixels at most you can drag the mouse, so that it's still considered a click (showing a popup), not a drag.
 id                 | String             | false    |                                          |
-
