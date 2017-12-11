@@ -17,7 +17,7 @@ A complete example is available at: https://RNAcentral.github.io/angularjs-genov
 Use this directive as a "web component" in your HTML:
 
 ```HTML
-<genoverse genome="genome" chromosome="chromosome" start="start" end="end" example-locations="exampleLocations" container=".container">
+<genoverse genome="genome" chromosome="chromosome" start="start" end="end" example-locations="exampleLocations">
     <genoverse-track name="'Sequence'" model="Genoverse.Track.Model.Sequence.Ensembl" view="Genoverse.Track.View.Sequence" controller="Genoverse.Track.Controller.Sequence" url="urls.sequence" resizable="'auto'" auto-height="true" extra="{100000: false}"></genoverse-track>
     <genoverse-track name="'Genes'" labels="true" info="'Ensembl API genes'" model="Genoverse.Track.Model.Gene.Ensembl" view="Genoverse.Track.View.Gene.Ensembl" url="urls.genes" resizable="'auto'" auto-height="true"></genoverse-track>
     <genoverse-track name="'Transcripts'" labels="true" info="'Ensembl API transcripts'" model="Genoverse.Track.Model.Transcript.Ensembl" view="Genoverse.Track.View.Transcript.Ensembl" url="urls.transcripts" resizable="'auto'" auto-height="true"></genoverse-track>
@@ -96,7 +96,6 @@ chr                | String             | true     |                            
 start              | Number             | true     |                                                      | Current genome location, where viewport starts
 end                | Number             | true     |                                                      | Current genome location, where viewport ends
 example-locations  | Object             | false    |                                                      | What location to display, when switching to another species e.g. {'homo_sapiens': {'chr': 'X', 'start': 73819307, 'end': 73856333}}
-container:         | String             | false    |                                                      | If you want Genoverse to change width as you resize window, specify this container element.
 highlights         | Array              | false    | []                                                   | Array of regions to highlight, in the form `{ "start": 100, "end", 200, "label": "My highlight", "removable": false }`
 plugins            | Array              | false    | ['controlPanel', 'karyotype', 'resizer', 'fileDrop'] | Array of plugins to use (chosen from `Genoverse/js/plugins`) ! Default different from original Genoverse
 url-param-template | String/Boolean     | false    | false                                                | Replace url upon browser drags with this template interpolation  ! Default different from original Genoverse
