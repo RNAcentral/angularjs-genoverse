@@ -68,8 +68,6 @@
                 end:              '=',
 
                 exampleLocations: '=?', // our addition, allows to switch species
-                container:        '@?', // our addition, allows for "reposnsive" width
-                width:            '@?', // if container not passed, change width
 
                 highlights:       '=?',
                 plugins:          '=?',
@@ -141,7 +139,7 @@
                     // ---------------------
                     var genoverseConfig = {
                         container: $element.find('#genoverse'),
-                        width: $scope.container ? $($scope.container).width() : $('body').width,
+                        width: $element.find('#genoverse').width(),
 
                         chr: $scope.chr,
                         start: $scope.start,
@@ -325,14 +323,12 @@
                  * Makes browser "responsive" - if container changes width, so does the browser.
                  */
                 ctrl.setGenoverseWidth = function() {
-                    if ($scope.container) {
-                        // if $scope.container passed, makes browser width responsive
-                        var w = $($scope.container).width();
-                        $scope.browser.setWidth(w);
+                    // if $scope.container passed, makes browser width responsive
+                    var width = $($element.find('.genoverse-wrap')).width();
+                    $scope.browser.setWidth(width);
 
-                        // resize might change viewport location - digest these changes
-                        $timeout(angular.noop)
-                    }
+                    // resize might change viewport location - digest these changes
+                    $timeout(angular.noop)
                 };
             }],
             link: function(scope, $element, attrs, ctrl, transcludeFn) {
@@ -346,7 +342,7 @@
                 ctrl.render();
 
                 // resize genoverse on browser width changes, if container passed - attach once only
-                if (scope.container) $(window).on('resize', ctrl.setGenoverseWidth);
+                $(window).on('resize', ctrl.setGenoverseWidth);
             }
         };
     }
