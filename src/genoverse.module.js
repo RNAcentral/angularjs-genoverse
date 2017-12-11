@@ -13,9 +13,9 @@
                 // Canis familiaris is a special case
                 if (input == 'Canis familiaris') {
                     input = 'Canis lupus familiaris';
-                } elif (input == 'Gorilla gorilla') {
+                } else if (input == 'Gorilla gorilla') {
                     input = 'Gorilla gorilla gorilla';
-                } elif (input == 'Ceratotherium simum') {
+                } else if (input == 'Ceratotherium simum') {
                     input = 'Ceratotherium simum simum';
                 }
                 return input.replace(/ /g, '_').toLowerCase();
@@ -36,9 +36,9 @@
         return function(input) {
             if (input == 'canis_lupus_familiaris') {
                 input = 'canis_familiaris';
-            } elif (input == 'gorilla_gorilla_gorilla') {
+            } else if (input == 'gorilla_gorilla_gorilla') {
                 input = 'gorilla_gorilla'
-            } elif (input == 'ceratotherium_simum_simum') {
+            } else if (input == 'ceratotherium_simum_simum') {
                 input = 'ceratotherium_simum'
             }
             var output = input.replace(/_/g, ' ');
