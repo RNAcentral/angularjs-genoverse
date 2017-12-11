@@ -381,7 +381,7 @@ angular.module('Example').controller('GenoverseGenomeBrowser', ['$scope', '$loca
     function setUrl(newValue, oldValue) {
         // set the full url
         $location.search({
-            species: $scope.genome,  // filter is from Genoverse module
+            species: $scope.genome,
             chromosome: $scope.chromosome,
             start: $scope.start,
             end: $scope.end

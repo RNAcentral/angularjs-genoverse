@@ -69,6 +69,7 @@
 
                 exampleLocations: '=?', // our addition, allows to switch species
                 container:        '@?', // our addition, allows for "reposnsive" width
+                width:            '@?', // if container not passed, change width
 
                 highlights:       '=?',
                 plugins:          '=?',
@@ -136,12 +137,11 @@
                  * @returns {Object} - config, suitable for calling new Genoverse(genoverseConfig);
                  */
                 ctrl.parseConfig = function() {
-
                     // Required + hard-coded
                     // ---------------------
                     var genoverseConfig = {
                         container: $element.find('#genoverse'),
-                        width: $('.container').width(),
+                        width: $scope.container ? $($scope.container).width() : $('body').width,
 
                         chr: $scope.chr,
                         start: $scope.start,
@@ -345,8 +345,8 @@
 
                 ctrl.render();
 
-                // resize genoverse on browser width changes - attach once only
-                $(window).on('resize', ctrl.setGenoverseWidth);
+                // resize genoverse on browser width changes, if container passed - attach once only
+                if (scope.container) $(window).on('resize', ctrl.setGenoverseWidth);
             }
         };
     }
