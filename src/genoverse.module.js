@@ -111,10 +111,14 @@
                 // Methods
                 // -------
                 ctrl.render = function() {
-                    var genoverseConfig = ctrl.parseConfig();
-
                     // create Genoverse browser
-                    $scope.browser = new Genoverse(genoverseConfig);
+                    try {
+                        var genoverseConfig = ctrl.parseConfig();
+                        $scope.browser = new Genoverse(genoverseConfig);
+                    } catch(err) {
+                        var genoverseConfig = ctrl.parseConfig(true);
+                        $scope.browser = new Genoverse(genoverseConfig);
+                    }
 
                     // set browser -> Angular data flow
                     $scope.browser.on({
@@ -140,9 +144,10 @@
 
                 /**
                  * Parses $scope variables and applies defaults, where necessary, constructing genoverseConfig
+                 * @param {Boolean} noKaryotype - don't display Karyotype - it sometimes breaks some genomes.
                  * @returns {Object} - config, suitable for calling new Genoverse(genoverseConfig);
                  */
-                ctrl.parseConfig = function() {
+                ctrl.parseConfig = function(noKaryotype) {
                     // Required + hard-coded
                     // ---------------------
                     var genoverseConfig = {
@@ -165,7 +170,11 @@
                     genoverseConfig.tracks = tracks;
 
                     if ($scope.highlights !== undefined)       genoverseConfig.highlights = $scope.highlights;
-                    genoverseConfig.plugins = $scope.plugins !== undefined ? $scope.plugins : ['controlPanel', 'karyotype', 'resizer', 'fileDrop'];
+                    if ($scope.plugins !== undefined)          genoverseConfig.plugins = $scope.plugins;
+                    else {
+                        if (noKaryotype) genoverseConfig.plugins = ['controlPanel', 'resizer', 'fileDrop'];
+                        else genoverseConfig.plugins = ['controlPanel', 'karyotype', 'resizer', 'fileDrop'];
+                    }
 
                     // Interaction with URL
                     // --------------------
