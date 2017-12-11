@@ -1,6 +1,6 @@
 {
   "name": "angularjs-genoverse",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "An AngularJS (1.x) directive, wrapping the Genoverse genome browser.",
   "main": "dist/angularjs-genoverse.min.js",
   "scripts": {
