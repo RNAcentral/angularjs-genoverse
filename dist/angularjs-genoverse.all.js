@@ -112,13 +112,8 @@
                 // -------
                 ctrl.render = function() {
                     // create Genoverse browser
-                    try {
-                        var genoverseConfig = ctrl.parseConfig();
-                        $scope.browser = new Genoverse(genoverseConfig);
-                    } catch(err) {
-                        var genoverseConfig = ctrl.parseConfig(true);
-                        $scope.browser = new Genoverse(genoverseConfig);
-                    }
+                    var genoverseConfig = ctrl.parseConfig();
+                    $scope.browser = new Genoverse(genoverseConfig);
 
                     // set browser -> Angular data flow
                     $scope.browser.on({
@@ -144,10 +139,9 @@
 
                 /**
                  * Parses $scope variables and applies defaults, where necessary, constructing genoverseConfig
-                 * @param {Boolean} noKaryotype - don't display Karyotype - it sometimes breaks some genomes.
                  * @returns {Object} - config, suitable for calling new Genoverse(genoverseConfig);
                  */
-                ctrl.parseConfig = function(noKaryotype) {
+                ctrl.parseConfig = function() {
                     // Required + hard-coded
                     // ---------------------
                     var genoverseConfig = {
@@ -171,10 +165,7 @@
 
                     if ($scope.highlights !== undefined)       genoverseConfig.highlights = $scope.highlights;
                     if ($scope.plugins !== undefined)          genoverseConfig.plugins = $scope.plugins;
-                    else {
-                        if (noKaryotype) genoverseConfig.plugins = ['controlPanel', 'resizer', 'fileDrop'];
-                        else genoverseConfig.plugins = ['controlPanel', 'karyotype', 'resizer', 'fileDrop'];
-                    }
+                    else genoverseConfig.plugins = ['controlPanel', 'karyotype', 'resizer', 'fileDrop'];
 
                     // Interaction with URL
                     // --------------------
