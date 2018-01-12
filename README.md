@@ -88,6 +88,7 @@ genoverse
 Global configuration of the browser. To specify tracks, use nested `<genoverse-track>` tags within `genoverse`.
 
 For more details, see: https://github.com/simonbrent/Genoverse/blob/master/docs/configuration.md
+
 :exclamation: This fork of Genoverse contains latest documentation, but obsolete codebase.
 
 
@@ -119,6 +120,7 @@ genoverseTrack
 Configuration of a single track. Note that you don't have to create Scalebar track - it's present by default.
 
 For more details, see: https://github.com/simonbrent/Genoverse/blob/master/docs/tracks/configuration.md
+
 :exclamation: This fork of Genoverse contains latest documentation, but obsolete codebase.
 
 
