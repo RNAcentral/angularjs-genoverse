@@ -323,8 +323,14 @@
                             ctrl.render();
                         }
                     });
+                    
+                    var highlightsWatch = $scope.$watch('highlights', function(newValue, oldValue) {
+                        if (!angular.equals(newValue, oldValue)) {
+                            $scope.browser.addHighlights(newValue);
+                        }
+                    })
 
-                    return [speciesWatch, chrWatch, startWatch, endWatch];
+                    return [speciesWatch, chrWatch, startWatch, endWatch, highlightsWatch];
                 };
 
                 /**
