@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "node_modules/.bin/mocha $(find test/require/*.js -print0 | xargs -r0 -I {} echo -n '--require {} ') --no-timeouts --recursive",
-    "build": "node utils/makeExpanded.js; webpack"
+    "build": "node utils/makeExpanded.js; webpack",
+    "gulp": "gulp"
   },
   "repository": {
     "type": "git",
@@ -21,11 +22,31 @@
     "url": "https://github.com/wtsi-web/Genoverse/issues"
   },
   "homepage": "http://wtsi-web.github.io/Genoverse/",
+  "dependencies": {},
   "devDependencies": {
+    "browser-sync": "^2.23.5",
     "canvas": "latest",
+    "del": "^3.0.0",
     "expect": "1.20.2",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.1.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-if": "^2.0.2",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-newer": "^1.4.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-size": "^3.0.0",
+    "gulp-sourcemaps": "^1.12.1",
+    "gulp-uglify": "^3.0.0",
     "jsdom": "latest",
+    "jquery": "^3.2.1",
+    "jquery-ui-bundle": "^1.12.1",
+    "jquery.mousehold": "^2.0.0",
+    "jquery.mousewheel": "^3.1.9",
+    "jquery.tipsy": "^1.0.3",
     "mocha": "latest",
+    "run-sequence": "^2.2.1",
     "webpack": "latest"
   }
 }
