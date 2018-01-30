@@ -39,14 +39,14 @@
     "gulp-size": "^3.0.0",
     "gulp-sourcemaps": "^1.12.1",
     "gulp-uglify": "^3.0.0",
-    "jsdom": "latest",
     "jquery": "^3.2.1",
     "jquery-ui-bundle": "^1.12.1",
     "jquery.mousehold": "^2.0.0",
     "jquery.mousewheel": "^3.1.9",
-    "jquery.tipsy": "^1.0.3",
+    "jsdom": "latest",
     "mocha": "latest",
     "run-sequence": "^2.2.1",
+    "tipsy": "^1.0.0",
     "webpack": "latest"
   }
 }
