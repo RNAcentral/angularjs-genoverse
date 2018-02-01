@@ -10,18 +10,21 @@
          */
         return function(input) {
             if (input) {
+                input = input.replace(/ /g, '_').toLowerCase();
+
                 // Canis familiaris is a special case
-                if (input == 'Canis familiaris') {
-                    input = 'Canis lupus familiaris';
-                } else if (input == 'Gorilla gorilla') {
-                    input = 'Gorilla gorilla gorilla';
-                } else if (input == 'Ceratotherium simum') {
-                    input = 'Ceratotherium simum simum';
+                if (input == 'canis_familiaris' || input == 'canis_lupus_familiaris') {
+                    input = 'canis_lupus_familiaris';
+                } else if (input == 'gorilla_gorilla' || input == 'gorilla_gorilla_gorilla') {
+                    input = 'gorilla_gorilla_gorilla';
+                } else if (input == 'ceratotherium_simum' || input == 'ceratotherium_simum_simum') {
+                    input = 'ceratotherium_simum_simum';
+                } else if (input == 'dictyostelium_discoideum' || input == 'dictyostelium_discoideum_ax4') {
+                    input = 'dictyostelium_discoideum';
                 }
-                return input.replace(/ /g, '_').toLowerCase();
-            } else {
-                return input;
             }
+
+            return input;
         }
     }
     urlencodeSpecies.$inject = [];
@@ -34,16 +37,22 @@
          * @returns {string} - capitalized scientific name of a species with whitespaces, e.g. Homo sapiens
          */
         return function(input) {
-            if (input == 'canis_lupus_familiaris') {
-                input = 'canis_familiaris';
-            } else if (input == 'gorilla_gorilla_gorilla') {
-                input = 'gorilla_gorilla'
-            } else if (input == 'ceratotherium_simum_simum') {
-                input = 'ceratotherium_simum'
+            if (input) {
+                input = input.replace(/_/g, ' ');
+                input = input.charAt(0).toUpperCase() + input.slice(1);
+
+                if (input == 'Canis familiaris' || input == 'Canis lupus familiaris') {
+                    input = 'Canis familiaris';
+                } else if (input == 'Gorilla gorilla' || input == 'Gorilla gorilla gorilla') {
+                    input = 'Gorilla gorilla'
+                } else if (input == 'Ceratotherium simum' || input == 'Ceratotherium simum simum') {
+                    input = 'Ceratotherium simum'
+                } else if (input == 'Dictyostelium discoideum' || input == 'Dictyostelium discoideum ax4') {
+                    input = 'Dictyostelium discoideum ax4';
+                }
             }
-            var output = input.replace(/_/g, ' ');
-            output = output.charAt(0).toUpperCase() + output.slice(1);
-            return output;
+
+            return input;
         }
     }
     urldecodeSpecies.$inject = [];
@@ -323,7 +332,7 @@
                             ctrl.render();
                         }
                     });
-                    
+
                     var highlightsWatch = $scope.$watch('highlights', function(newValue, oldValue) {
                         if (!angular.equals(newValue, oldValue)) {
                             $scope.browser.addHighlights(newValue);
