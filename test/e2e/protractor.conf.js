@@ -6,7 +6,7 @@ exports.config = {
         '*.spec.js'
     ],
 
-    baseUrl: 'http://localhost:8000/',
+    baseUrl: 'http://localhost:3000/',
 
     allScriptsTimeout: 10000,
 

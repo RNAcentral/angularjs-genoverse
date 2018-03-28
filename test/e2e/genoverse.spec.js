@@ -1,6 +1,6 @@
 describe("genoverse directive spec", function() {
     var Homepage = function() {
-        browser.get("http://localhost:8000/index.html");
+        browser.get(browser.baseUrl + "index.html");
 
         this.genomicStartInput = element(by.css('#genomic-start-input'));
         expect((this.genomicStartInput).isPresent()).toBe(true);

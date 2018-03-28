@@ -5,8 +5,8 @@
   "main": "dist/angularjs-genoverse.min.js",
   "scripts": {
     "test:unit": "karma start --browsers Chrome --single-run",
-    "test:e2e": "protractor test/e2e/protractor.conf.js",
-    "test:e2e:saucelabs": "protractor test/e2e/protractor.saucelabs.conf.js",
+    "test:e2e": "node_modules/.bin/protractor test/e2e/protractor.conf.js",
+    "test:e2e:saucelabs": "node_modules/.bin/protractor test/e2e/protractor.saucelabs.conf.js",
     "clean": "rm -rf dist/*",
     "concat": "cat `find . -path './src/*.js' -not -path './src/*.spec.js'` > dist/angularjs-genoverse.all.js",
     "uglify": "find . -path './src/*.js' -not -path './src/*.spec.js' | xargs node_modules/.bin/uglifyjs --compress --mangle -o dist/angularjs-genoverse.min.js --source-map \"root='/',url='/dist/angularjs-genoverse.min.js.map'\"",
@@ -14,7 +14,8 @@
     "watch": "watch 'npm run build' src -d",
     "serve:http-server": "http-server -a localhost -p 3000 -c-1 .",
     "serve": "browser-sync start --server --files 'dist/*' 'app.js' 'index.html'",
-    "start": "npm run watch & sleep 3 && npm run serve"
+    "start": "npm run watch & sleep 3 && npm run serve",
+    "webdriver-update": "node_modules/bin/protractor/webdriver-manager update"
   },
   "repository": {
     "type": "git",
@@ -48,6 +49,7 @@
     "karma-chrome-launcher": "^2.0.0",
     "karma-firefox-launcher": "^1.0.0",
     "karma-jasmine": "^1.1.0",
+    "protractor": "^5.3.0",
     "uglify-js": "^3.3.16",
     "watch": "^1.0.2"
   }

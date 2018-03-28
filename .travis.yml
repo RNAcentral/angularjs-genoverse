@@ -17,8 +17,8 @@ addons:
 
 install:
 - npm prune && npm install
-- npm install -g uglify-js http-server protractor karma-cli
-- webdriver-manager update --ie
+- npm install -g http-server karma-cli
+- npm run webdriver-update
 
 before_script:
 - npm start &
