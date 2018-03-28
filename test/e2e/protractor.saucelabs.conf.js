@@ -34,11 +34,15 @@ exports.config = {
     multiCapabilities: [
         capabilities({
             'name': 'Linux/Chrome',
-            'browserName': 'chrome'
+            'browserName': 'chrome',
+            'platform': 'Linux',
+            'version': '48.0'
         }),
         capabilities({
             'name': 'Linux/Firefox',
-            'browserName': 'firefox'
+            'browserName': 'firefox',
+            'platform': 'Linux',
+            'version': '45.0'
         }),
         // capabilities({
         //     'name': 'Win7/Firefox',
@@ -48,7 +52,8 @@ exports.config = {
         capabilities({
             'name': 'Win7/Chrome',
             'browserName': 'chrome',
-            'platform': 'Windows 7'
+            'platform': 'Windows 7',
+            'version': '53.0'
         }),
         // capabilities({
         //     'name': 'Win7/IE9',
