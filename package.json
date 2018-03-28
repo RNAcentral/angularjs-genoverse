@@ -9,7 +9,7 @@
     "test:e2e:saucelabs": "protractor test/e2e/protractor.saucelabs.conf.js",
     "clean": "rm -rf dist/*",
     "concat": "cat `find . -path './src/*.js' -not -path './src/*.spec.js'` > dist/angularjs-genoverse.all.js",
-    "uglify": "find . -path './src/*.js' -not -path './src/*.spec.js' | xargs uglifyjs --compress --mangle -o dist/angularjs-genoverse.min.js --source-map dist/angularjs-genoverse.min.js.map --source-map-url /dist/angularjs-genoverse.min.js.map --source-map-root /",
+    "uglify": "find . -path './src/*.js' -not -path './src/*.spec.js' | xargs node_modules/.bin/uglifyjs --compress --mangle -o dist/angularjs-genoverse.min.js --source-map \"root='/',url='/dist/angularjs-genoverse.min.js.map'\"",
     "build": "npm run clean && npm run concat && npm run uglify",
     "watch": "watch 'npm run build' src -d",
     "serve:http-server": "http-server -a localhost -p 3000 -c-1 .",
@@ -48,6 +48,7 @@
     "karma-chrome-launcher": "^2.0.0",
     "karma-firefox-launcher": "^1.0.0",
     "karma-jasmine": "^1.1.0",
+    "uglify-js": "^3.3.16",
     "watch": "^1.0.2"
   }
 }
