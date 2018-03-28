@@ -15,7 +15,7 @@
     "serve:http-server": "http-server -a localhost -p 3000 -c-1 .",
     "serve": "browser-sync start --server --files 'dist/*' 'app.js' 'index.html'",
     "start": "npm run watch & sleep 3 && npm run serve",
-    "webdriver-update": "node_modules/bin/protractor/webdriver-manager update"
+    "webdriver-update": "node_modules/protractor/bin/webdriver-manager update"
   },
   "repository": {
     "type": "git",
